@@ -1,0 +1,44 @@
+<script type="text/markdown" data-help-name="EWIO2 - Meter">
+Read meter value of EWIO2.
+
+Meter node provides current datapoint value of a meter, which is connected and configured at EWIO2.
+
+### Details
+Every node represents one meter datapoint of an EWIO2.
+Values of **Modbus** meter, **M-Bus** meter and EWIO2 system meter can be read.
+
+Node provides every change of measurement value to nodes output.
+Configuration of meter datapoint and range must be done previously in EWIO2 web interface.
+
+Additional values of nodes output may be timestamp and flags of last measurement value.
+Datatype changes then from 'number' to 'Object'!
+Properties therefore can be seen in configuration menu below 'Additional node output values...'.
+
+### Outputs
+: payload (number | Object) : Current value of meter datapoint, optional are timestamp and flags.
+
+### Configuration menu
+This node uses the connection of EWIO2 node, to connect to an EWIO2.
+All meter and datapoints, which are configured in EWIO2 web interface, can be selected.
+For the selected meter datapoint, the last measured value, sampling range, timestamp and flags are shown.
+Additionally timestamp and flags can be configured as nodes output.
+
+### Properties
+: EWIO2 (select) : EWIO2 node, to connect to EWIO2
+: Meter (select) : To be read meter of EWIO2
+: Datapoint (select) : To be read datapoint of meter
+: Value (number) : Last measured value of datapoint
+: Range (string) : Sampling range of datapoint
+: Timestamp (string) : Timestamp of last measured value
+: Flags (string) : Flags of last measured value
+: Timestamp (boolean) : Additionl output of timestamp
+: Flags (boolean) : Additional output of flags
+: Name (string) : User defined name of node
+
+### Links
+- [Metz Connect](https://www.metz-connect.com/home.1e.en.html)
+- [Overview EWIO2 Data logger](https://www.metz-connect.com/home/products/c-logline/energy-controlling/data-logger.6a.en.html)
+- [Overview EWIO2 Ethernet I/O](https://www.metz-connect.com/home/products/c-logline/i-o-components/ethernet-i-os.69.en.html)
+- [Overwie Modbus RTU I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/modbus-rtu-i-os.6c.en.html)
+- [Overview BACnet MS/TP I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/bacnet-ms-tp-i-os.6d.en.html)
+</script>

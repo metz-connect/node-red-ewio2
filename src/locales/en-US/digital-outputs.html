@@ -1,0 +1,36 @@
+<script type="text/markdown" data-help-name="EWIO2 - Digital OUT">
+Set digital output of EWIO2.
+
+### Details
+Every node represents one digital output of an EWIO2.
+Any digital output of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os can be used.
+
+The desired switching state, which was received as node input, will be set to digital output of EWIO2
+
+Output of node is the current switching state of digital output, if digital output was set by node input signal.
+
+### Inputs
+: payload (boolean | number) : Desired switching state
+
+### Outputs
+: payload (boolean) : Current switching state
+
+### Configuration menu
+This node uses the connection of EWIO2 node, to connect to an EWIO2.
+All available digital outputs of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os are loaded and can be selected.
+Live data of switching state and if port is configured as manual mode, are shown for the selected port.
+
+### Properties
+: EWIO2 (select) : EWIO2 node, to connect to EWIO2
+: Port (select) : Digital output of EWIO2
+: State (boolean) : Switching state of digital output
+: Man. mode (boolean) : Manual mode
+: Name (string) : User defined name of node
+
+### Links
+- [Metz Connect](https://www.metz-connect.com/home.1e.en.html)
+- [Overview EWIO2 Data logger](https://www.metz-connect.com/home/products/c-logline/energy-controlling/data-logger.6a.en.html)
+- [Overview EWIO2 Ethernet I/O](https://www.metz-connect.com/home/products/c-logline/i-o-components/ethernet-i-os.69.en.html)
+- [Overwie Modbus RTU I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/modbus-rtu-i-os.6c.en.html)
+- [Overview BACnet MS/TP I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/bacnet-ms-tp-i-os.6d.en.html)
+</script>

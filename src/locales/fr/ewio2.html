@@ -1,0 +1,33 @@
+<script type="text/markdown" data-help-name="EWIO2">
+Etablit la connexion avec l'enregistreur de données EWIO2 ou l'E/S Ethernet de Metz Connect.
+
+### Détails
+Ce nœud se connecte en arrière-plan à EWIO2.
+La connexion peut être établie avec l'EWIO2 lui-même (cet EWIO2, avec l'adresse IP interne 127.0.0.1) ou avec un autre EWIO2 dans le réseau local.
+Cette connexion est utilisée par les nœuds d'E/S EWIO2 et le nœud de compteur EWIO2.
+
+Lors de l'ouverture de la configuration, la découverte des appareils EWIO2 dans le réseau local démarre automatiquement pendant 3 secondes.
+Le nom d'hôte peut être choisi dans la liste déroulante de l'EWIO2 découvert ou saisi manuellement.
+Le bouton flèche vers le bas affiche tous les EWIO2 découverts.
+Le bouton "Loupe" relance la découverte des appareils EWIO2.
+Pour l'EWIO2 découvert, le bouton info (i) permet d'obtenir plus de détails sur cet appareil.
+
+### Chiffrement (facultatif)
+La connexion peut être cryptée (activer la connexion sécurisée (SSL/TLS)).
+Cette option permet d'ajouter un nœud 'tls-config'.
+Si seul le cryptage est important, rien ne doit être téléchargé ou saisi et l'option 'Vérifier le certificat du serveur' ne doit pas être activée.
+Pour utiliser un certificat auto-signé, téléchargez-le en tant que 'Certificat CA' et cochez 'Vérifier le certificat du serveur'.
+
+L'utilisateur peut être administrateur, opérateur ou standard.
+
+### Propriétés
+: Hôte (select | string) : Nom d'hôte ou adresse IP de EWIO2
+: Activer la connexion... (boolean) : Connexion cryptée. D'autres paramètres dans le nœud 'tls-config' sont nécessaires !
+: Utilisateur (select) : Sélectionner l'utilisateur
+: Mot de passe (string) : Mot de passe de l'utilisateur
+: Nom (string) : Nom du nœud défini par l'utilisateur
+### Liens
+- [Metz Connect](https://www.metz-connect.com/home.1e.fr.html)
+- [Vue d'ensemble EWIO2 Enregistreur de données](https://www.metz-connect.com/home/produits/c-logline/controlling-nerg-tique/enregistreur-de-donn-es.6a.fr.html)
+- [Vue d'ensemble EWIO2 Ethernet E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/ethernet-e-s.69.fr.html)
+</script>

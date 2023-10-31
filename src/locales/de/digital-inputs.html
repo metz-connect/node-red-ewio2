@@ -1,0 +1,48 @@
+<script type="text/markdown" data-help-name="EWIO2 - Digital IN">
+Wert von digitalem Eingang eines EWIO2 lesen.
+
+Digitale Eingänge liefern den Schaltzustand oder den Impulszählerwert (je nachdem ob der digitale Eingang als Imulszähler konfiguriert ist).
+
+### Details
+Mit jedem Knoten kann ein digitaler Eingang eines EWIO2 angesprochen werden.
+Es können die digitalen Eingänge des EWIO2 oder eines an den EWIO2 angeschlossenen Modbus RTU I/Os bzw. BACnet MS/TP I/Os gelesen werden.
+
+Der Knoten reagiert auf alle Änderungen des digitalen Eingangs und gibt diese am Ausgang des Knoten aus.
+Vorbedingung hierfür ist, dass 'Steigende Flanke am EWIO2' bzw. 'Fallende Flanke am EWIO2' (für Schaltzustand) oder 'Wertänderung am EWIO2' (für Impulszähler) im Konfigurations-Menü gesetzt ist.
+
+Der Knoten kann durch Eingangssignale den digitalen Eingang des EWIO2 auslesen und konfigurien:
+- **topic**: "trigger"
+  - Digitalen Eingang lesen
+- **topic**: "pulse" + **payload**: true/false
+  - Impulszähler aktivieren / deaktivieren
+- **topic**: "counter" + **payload**: number
+  - Impulszählerwert setzen
+
+Vorbedingung hierfür ist, dass 'Eingangssignal am Knoten' im Konfigurations-Menü gesetzt ist.
+
+### Eingänge
+: payload (boolean | number) : Gewünschter Konfigurationswert
+: topic (string) : "trigger", "pulse" oder "counter"
+
+### Ausgänge
+: payload (boolean | number) : Aktueller Schaltzustand bzw. Impulszählerwert
+
+### Konfigurations-Menü
+Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
+Alle am EWIO2 vorhandenen digitalen Eingänge inkl. Modbus RTU I/Os und BACnet MS/TP I/Os werden geladen und können ausgewählt werden.
+Für den ausgewählten Anschluss wird live der Schaltzustand bzw. Impulszählerwert angezeigt, sowie ob der Anschluss als Impulszähler konfiguriert ist.
+
+### Eigenschaften
+: EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
+: Anschluss (select) : Digitaler Eingang des EWIO2
+: Status / Wert (boolean | number) : Schaltzustand / Impulszählerwert des digitalen Eingang
+: Impulszähler (boolean) : Anschluss als Impulszähler konfiguriert
+: Name (string) : Benutzerdefinierte Bezeichnung des Knotens
+
+### Links
+- [Metz Connect](https://www.metz-connect.com)
+- [Übersicht EWIO2 Datenlogger](https://www.metz-connect.com/home/produkte/c-logline/energie-controlling/datenlogger.6a.de.html)
+- [Übersicht EWIO2 Ethernet I/O](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/ethernet-i-os.69.de.html)
+- [Übersicht Modbus RTU I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/modbus-rtu-i-os.6c.de.html)
+- [Übersicht BACnet MS/TP I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/bacnet-ms-tp-i-os.6d.de.html)
+</script>

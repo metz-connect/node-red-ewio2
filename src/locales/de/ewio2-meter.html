@@ -1,0 +1,44 @@
+<script type="text/markdown" data-help-name="EWIO2 - Meter">
+Wert eines Zählers des EWIO2 lesen.
+
+Der Zähler-Knoten liefert den aktuellen Messwert eines Zählerdatenpunktes, der am EWIO2 angeschlossen und konfiguriert ist.
+
+### Details
+Mit jedem Knoten kann ein Zählerdatenpunkt eines EWIO2 angesprochen werden.
+Es können Werte von **Modbus**-Zählern, **M-Bus**-Zählern und EWIO2-Systemzählern gelesen werden.
+
+Der Knoten reagiert auf alle Änderungen des Messwertes und gibt diese am Ausgang des Knoten aus.
+Die Konfiguration des Zählerdatenpunktes, sowie des Abtastintervalls, muss vorab im EWIO2 Web-Interface erfolgen.
+
+Zusätzlich zur Ausgabe des aktuellen Messwertes kann der dazugehörige Zeitstempel und die Flags ausgegeben werden.
+Der Datentyp der Ausgabe ist dann nicht mehr 'number', sondern 'Object'!
+Die Einstellungen dazu sind im Konfigurationsmenü unter 'Zusätzliche Ausgabewerte des Knoten...' zu finden.
+
+### Ausgänge
+: payload (number | Object) : Aktueller Wert des Zählerdatenpunktes, optional sind Zeitstempel und Flags.
+
+### Konfigurations-Menü
+Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
+Alle im EWIO2 Web-Interface konfigurierten Zähler und Datenpunkte werden geladen und können ausgewählt werden.
+Für den ausgewählten Zählerdatenpunkt wird der letzte Messwert, das Abtastintervall, der Zeitstempel und die Flags angezeigt.
+Zusätzlich zur Ausgabe des Messwertes kann der Zeitstempel und / oder die Flags ausgegeben werden.
+
+### Eigenschaften
+: EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
+: Zähler (select) : Zähler, der vom EWIO2 ausgelesen werden soll
+: Datenpunkt (select) : Auszulesender Datenpunkt des Zählers
+: Wert (number) : Letzter Messwert des Datenpunktes
+: Intervall (string) : Ausleseintervall des Datenpunktes
+: Zeitstempel (string) : Zeitstempel des letzten Messwertes
+: Flags (string) : Flags des letzten Messwertes
+: Zeitstempel (boolean) : Zustätzlich den Zeitstempel ausgeben
+: Flags (boolean) : Zusätzlich die Flags ausgeben
+: Name (string) : Benutzerdefinierte Bezeichnung des Knotens
+
+### Links
+- [Metz Connect](https://www.metz-connect.com)
+- [Übersicht EWIO2 Datenlogger](https://www.metz-connect.com/home/produkte/c-logline/energie-controlling/datenlogger.6a.de.html)
+- [Übersicht EWIO2 Ethernet I/O](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/ethernet-i-os.69.de.html)
+- [Übersicht Modbus RTU I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/modbus-rtu-i-os.6c.de.html)
+- [Übersicht BACnet MS/TP I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/bacnet-ms-tp-i-os.6d.de.html)
+</script>

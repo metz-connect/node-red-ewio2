@@ -1,0 +1,44 @@
+<script type="text/markdown" data-help-name="EWIO2 - Meter">
+Relever la valeur du compteur de EWIO2.
+
+Le nœud de compteur fournit la valeur actuelle du point de données d'un compteur, qui est connecté et configuré à EWIO2.
+
+### Détails
+Chaque nœud représente un point de données d'un mètre d'EWIO2.
+Les valeurs des compteurs **Modbus**, **M-Bus** et du système EWIO2 peuvent être lues.
+
+Le nœud fournit chaque changement de valeur de mesure à la sortie du nœud.
+La configuration du point de référence et de la plage du compteur doit être effectuée au préalable dans l'interface web EWIO2.
+
+D'autres valeurs de sortie des nœuds peuvent être l'horodatage et les drapeaux de la dernière valeur mesurée.
+Le type de données passe alors de "number" à "Object" !
+Les propriétés peuvent donc être consultées dans le menu de configuration sous "Valeurs de sortie de nœuds supplémentaires...".
+
+### Sorties
+: payload (number | Object) : Valeur actuelle du point de données du compteur, l'horodatage et les drapeaux sont facultatifs.
+
+### Menu de configuration
+Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
+Tous les compteurs et points de données configurés dans l'interface web EWIO2 peuvent être sélectionnés.
+Pour le point de mesure sélectionné, la dernière valeur mesurée, la plage d'échantillonnage, l'horodatage et les drapeaux sont affichés.
+En outre, l'horodatage et les drapeaux peuvent être configurés comme sortie des nœuds.
+
+### Propriétés
+: EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
+: Compteur (select) : Compteur à lire de EWIO2
+: Point de données (select) : Point de données à lire du compteur
+: Valeur (number) : Dernière valeur mesurée du point de données
+: Gamme (string) : Plage d'échantillonnage du point de données
+: Horodatage (string) : Horodatage de la dernière valeur mesurée
+: Drapeaux (string) : Drapeaux de la dernière valeur mesurée
+: Horodatage (boolean) : Edition supplémentaire de l'horodatage
+: Drapeaux (boolean) : Édition supplémentaire de drapeaux
+: Nom (string) : Nom du nœud défini par l'utilisateur
+
+### Liens
+- [Metz Connect](https://www.metz-connect.com/home.1e.fr.html)
+- [Vue d'ensemble EWIO2 Enregistreur de données](https://www.metz-connect.com/home/produits/c-logline/controlling-nerg-tique/enregistreur-de-donn-es.6a.fr.html)
+- [Vue d'ensemble EWIO2 Ethernet E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/ethernet-e-s.69.fr.html)
+- [Vue d'ensemble Modbus RTU E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/modbus-rtu-e-s.6c.fr.html)
+- [Vue d'ensemble BACnet MS/TP E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/bacnet-ms-tp-e-s.6d.fr.html)
+</script>

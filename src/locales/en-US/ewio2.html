@@ -1,0 +1,33 @@
+<script type="text/markdown" data-help-name="EWIO2">
+Establishes connection to EWIO2 data logger or Ethernet I/O of Metz Connect.
+
+### Details
+This node connects in background to EWIO2.
+Connection can be established with EWIO2 itself (this EWIO2, with internal IP address 127.0.0.1) or with another EWIO2 in local network.
+This connection is used by EWIO2 I/O nodes and EWIO2 meter node.
+
+When opening configuration, discovery of EWIO2 devices in local network automatically starts for 3s.
+Hostname can be chosen in dropdown list of discovered EWIO2 or entered manually.
+Arrow down button shows all discovered EWIO2.
+Magnifier button starts discovery of EWIO2 devices once more.
+For discovered EWIO2 the info button (i) shows more details about this device.
+
+### Encryption (optional)
+Connection can be encrypted (Enable secure (SSL/TLS) connection).
+With this option, a 'tls-config' node can be added.
+If only encryption is relevant, nothing must be uploaded or entered and 'Verify server certificate' must not be set.
+To use a self-signed certificate, upload this as 'CA Certificate' and check 'Verify server certificate'.
+
+User can be Administrator, Operator or Standard.
+
+### Properties
+: Host (select | string) : Hostname or IP address of EWIO2
+: Enable secure... (boolean) : Encrypted connection. Further settings in 'tls-config' node required!
+: User (select) : Select user
+: Password (string) : Password of user
+: Name (string) : User defined name of node
+### Links
+- [Metz Connect](https://www.metz-connect.com/home.1e.en.html)
+- [Overview EWIO2 Data logger](https://www.metz-connect.com/home/products/c-logline/energy-controlling/data-logger.6a.en.html)
+- [Overview EWIO2 Ethernet I/O](https://www.metz-connect.com/home/products/c-logline/i-o-components/ethernet-i-os.69.en.html)
+</script>

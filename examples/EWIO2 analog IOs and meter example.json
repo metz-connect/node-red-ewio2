@@ -1,0 +1,262 @@
+[
+    {
+        "id": "6be77d054c9c53e2",
+        "type": "tab",
+        "label": "EWIO2 analog IOs and counter example",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ad9686cfaabd6dec",
+        "type": "EWIO2 - Analog OUT",
+        "z": "6be77d054c9c53e2",
+        "ewio2": "ee2949049c4f01d2",
+        "name": "analog output 1",
+        "ioportAo": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"addr\":\"00_0\"}",
+        "value": "9.99",
+        "manualMode": "",
+        "x": 520,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e939cd952db1b507",
+        "type": "range",
+        "z": "6be77d054c9c53e2",
+        "minin": "0",
+        "maxin": "1",
+        "minout": "0",
+        "maxout": "10",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "",
+        "x": 370,
+        "y": 340,
+        "wires": [
+            [
+                "ec8363c50c15bc29"
+            ]
+        ]
+    },
+    {
+        "id": "ec8363c50c15bc29",
+        "type": "EWIO2 - Analog OUT",
+        "z": "6be77d054c9c53e2",
+        "ewio2": "ee2949049c4f01d2",
+        "name": "analog output 2",
+        "ioportAo": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"addr\":\"01_0\"}",
+        "value": "6.00",
+        "manualMode": "",
+        "x": 580,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f82c1911d5e38fd",
+        "type": "comment",
+        "z": "6be77d054c9c53e2",
+        "name": "",
+        "info": "Digital input is configured as system counter of EWIO2 and returning 0 or 1.\nThis digital value is mapped to a analog value (0 or 10).\nThe output is set as analog signal (with the two values 0 and 10) to analog output.\n",
+        "x": 1000,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1c54cb220b822549",
+        "type": "comment",
+        "z": "6be77d054c9c53e2",
+        "name": "",
+        "info": "Analog input of EWIO2 is configured as system counter and returning a value between 0 and 10.\nThis value is directly mapped to a analog output of EWIO2.\n",
+        "x": 1000,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "4102cc9781af97b6",
+        "type": "EWIO2 - Analog IN",
+        "z": "6be77d054c9c53e2",
+        "ewio2": "ee2949049c4f01d2",
+        "name": "analog input 2",
+        "ioportAi": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"addr\":\"01_0\"}",
+        "valueConfig": "7",
+        "value": "24.22",
+        "inputSignal": "",
+        "valueUpdate": true,
+        "x": 160,
+        "y": 80,
+        "wires": [
+            [
+                "82570675ef211f28"
+            ]
+        ]
+    },
+    {
+        "id": "82570675ef211f28",
+        "type": "switch",
+        "z": "6be77d054c9c53e2",
+        "name": "more than 25",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "25",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 360,
+        "y": 80,
+        "wires": [
+            [
+                "60da36f1196ae795"
+            ],
+            [
+                "528921accccaff22"
+            ]
+        ]
+    },
+    {
+        "id": "60da36f1196ae795",
+        "type": "change",
+        "z": "6be77d054c9c53e2",
+        "name": "set true",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 60,
+        "wires": [
+            [
+                "9acad1791e84659e"
+            ]
+        ]
+    },
+    {
+        "id": "528921accccaff22",
+        "type": "change",
+        "z": "6be77d054c9c53e2",
+        "name": "set false",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 100,
+        "wires": [
+            [
+                "9acad1791e84659e"
+            ]
+        ]
+    },
+    {
+        "id": "9acad1791e84659e",
+        "type": "EWIO2 - Digital OUT",
+        "z": "6be77d054c9c53e2",
+        "ewio2": "ee2949049c4f01d2",
+        "name": "digital OUT relais 1",
+        "ioportDo": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"addr\":\"00_0\"}",
+        "value": "",
+        "manualMode": "",
+        "x": 790,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b8d21b35d72f505d",
+        "type": "comment",
+        "z": "6be77d054c9c53e2",
+        "name": "",
+        "info": "Get analog input value of EWIO2 and check if greater than 25.\nIf less 25, false will be set to digital output.\nElse, true will be set to digital output.\n",
+        "x": 1000,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "b503657d7ab249fb",
+        "type": "EWIO2 - Meter",
+        "z": "6be77d054c9c53e2",
+        "ewio2": "ee2949049c4f01d2",
+        "name": "Meter digital input 2",
+        "counter": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"addr\":\"19\"}",
+        "datapoint": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"dp\":\"58\",\"cntr\":\"19\"}",
+        "range": "Event-based",
+        "value": "1",
+        "timestamp": "2023-10-27 13:56:50",
+        "flags": "S;A;N;G;N;I;T;D",
+        "outputTimestamp": "",
+        "outputFlags": "",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "e939cd952db1b507"
+            ]
+        ]
+    },
+    {
+        "id": "245347ccce1c754c",
+        "type": "EWIO2 - Meter",
+        "z": "6be77d054c9c53e2",
+        "ewio2": "ee2949049c4f01d2",
+        "name": "Meter analog input 3",
+        "counter": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"addr\":\"18\"}",
+        "datapoint": "{\"nodeId\":\"ee2949049c4f01d2\",\"host\":\"127.0.0.1\",\"dp\":\"56\",\"cntr\":\"18\"}",
+        "range": "5 seconds",
+        "value": "9.99",
+        "timestamp": "2023-10-27 14:26:05",
+        "flags": "S;A;P;G;N;I;T;D",
+        "outputTimestamp": "",
+        "outputFlags": "",
+        "x": 170,
+        "y": 580,
+        "wires": [
+            [
+                "ad9686cfaabd6dec"
+            ]
+        ]
+    },
+    {
+        "id": "ee2949049c4f01d2",
+        "type": "EWIO2",
+        "name": "Office",
+        "host": "127.0.0.1",
+        "hostTemp": "{\"address\":\"127.0.0.1\",\"location\":\"Office\",\"hostname\":\"EWIO2-a58651\",\"nrAvailable\":1,\"nrRunning\":1,\"hwModell\":\"EWIO2-M-BM\",\"swVersion\":\"1.5.42\",\"serial\":\"00000018\",\"mac\":\"70:b3:d5:a5:86:51\"}",
+        "encryption": false,
+        "tlsConfig": ""
+    }
+]

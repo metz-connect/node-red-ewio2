@@ -1,0 +1,39 @@
+{
+    "name": "@metz-connect/node-red-ewio2",
+    "version": "1.0.0",
+    "description": "Provides nodes to access EWIO2 interfaces like IOs and meter - from Node-RED",
+    "dependencies": {
+        "ws": "^8.8.0",
+        "crypto-js": "^4.0.0"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "METZ CONNECT GmbH",
+    "homepage": "https://www.metz-connect.com",
+    "keywords": [
+        "node-red",
+        "ewio2",
+        "analog output",
+        "digital output",
+        "analog input",
+        "digital input",
+        "meter",
+        "m-bus",
+        "modbus",
+        "pulse counter"
+    ],
+    "license": "BSD-3-Clause",
+    "node-red": {
+        "version": ">=3.0.2",
+        "nodes": {
+            "ewio2": "src/ewio2.js",
+            "digital-outputs": "src/digital-outputs.js",
+            "analog-outputs": "src/analog-outputs.js",
+            "digital-inputs": "src/digital-inputs.js",
+            "analog-inputs": "src/analog-inputs.js",
+            "ewio2-meter": "src/ewio2-meter.js"
+        }
+    }
+}
+ 

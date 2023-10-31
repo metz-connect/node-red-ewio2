@@ -1,0 +1,48 @@
+<script type="text/markdown" data-help-name="EWIO2 - Digital IN">
+Read digital input value of EWIO2.
+
+Digital inputs provide the switching state or pulse counter value (if configured as pulse counter).
+
+### Details
+Every node represents one digital input of an EWIO2.
+Any digital input of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os can be used.
+
+Node provides every change of digital input to nodes output.
+Precondition is that 'Rising edge at EWIO2' or 'Falling edge at EWIO2' (for switching state) or 'Change in value at EWIO2' (for pulse counter) is set in confuguration menu.
+
+Node can read and configure digital inputs of EWIO2 by nodes input signals:
+- **topic**: "trigger"
+  - Read digital input
+- **topic**: "pulse" + **payload**: true/false
+  - Activate / deactivate pulse counter
+- **topic**: "counter" + **payload**: number
+  - Set pulse counter value
+
+Precondition is that ' Input signal at node' is set in configuration menu.
+
+### Inputs
+: payload (boolean | number) : Desired configuration value
+: topic (string) : "trigger", "pulse" or "counter"
+
+### Outputs
+: payload (boolean | number) : Current switching state or pulse counter value
+
+### Configuration menu
+This node uses the connection of EWIO2 node, to connect to an EWIO2.
+All available digital inputs of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os are loaded and can be selected.
+Live data of switching state or pulse counter value and if port is configured as pulse counter, are shown for the selected port.
+
+### Properties
+: EWIO2 (select) : EWIO2 node, to connect to EWIO2
+: Port (select) : Digital input of EWIO2
+: State / Value (boolean | number) : Switching state / pulse counter value of digital input
+: Pulse count. (boolean) : Port is configured as pulse counter
+: Name (string) : User defined name of node
+
+### Links
+- [Metz Connect](https://www.metz-connect.com/home.1e.en.html)
+- [Overview EWIO2 Data logger](https://www.metz-connect.com/home/products/c-logline/energy-controlling/data-logger.6a.en.html)
+- [Overview EWIO2 Ethernet I/O](https://www.metz-connect.com/home/products/c-logline/i-o-components/ethernet-i-os.69.en.html)
+- [Overwie Modbus RTU I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/modbus-rtu-i-os.6c.en.html)
+- [Overview BACnet MS/TP I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/bacnet-ms-tp-i-os.6d.en.html)
+</script>

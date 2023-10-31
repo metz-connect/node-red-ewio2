@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="EWIO2 - Analog IN">
+Lecture de la valeur de l'entrée analogique de EWIO2.
+
+### Détails
+Chaque nœud représente une entrée analogique d'un EWIO2.
+Toute entrée analogique de EWIO2 et les E/S Modbus RTU ou BACnet MS/TP connectées à EWIO2 peuvent être utilisées.
+
+Le nœud fournit chaque changement d'entrée analogique à la sortie des nœuds.
+La condition préalable est que le "changement de valeur à EWIO2" soit défini dans le menu de configuration.
+Pour réduire le bruit de l'entrée analogique, un nœud "filtre" peut être connecté à la sortie de ce nœud.
+
+Le nœud peut lire les valeurs d'entrée analogiques de EWIO2 par les signaux d'entrée des nœuds :
+- **topic**: "trigger"
+  - Lecture de l'entrée analogique
+
+La condition préalable est que le paramètre "Signal d'entrée au nœud" soit défini dans le menu de configuration.
+
+### Entrées
+: topic (string) : "trigger" (valeur de lecture)
+
+### Sorties
+: payload (number) : Valeur actuelle de l'entrée analogique
+
+### Menu de configuration
+Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
+Toutes les entrées analogiques disponibles de l'EWIO2 et des E/S Modbus RTU ou BACnet MS/TP connectées à l'EWIO2 sont chargées et peuvent être sélectionnées.
+Les données en temps réel de la configuration et de la valeur sont affichées pour le port sélectionné.
+La configuration peut être modifiée. Chaque changement de configuration a un effet immédiat sur EWIO2 !
+
+### Propriétés
+: EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
+: Port (select) : Entrée analogique de EWIO2
+: Config. (select) : Configuration actuelle
+: Valeur (number) : Valeur actuelle
+: Nom (string) : Nom du nœud défini par l'utilisateur
+
+### Liens
+- [Metz Connect](https://www.metz-connect.com/home.1e.fr.html)
+- [Vue d'ensemble EWIO2 Enregistreur de données](https://www.metz-connect.com/home/produits/c-logline/controlling-nerg-tique/enregistreur-de-donn-es.6a.fr.html)
+- [Vue d'ensemble EWIO2 Ethernet E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/ethernet-e-s.69.fr.html)
+- [Vue d'ensemble Modbus RTU E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/modbus-rtu-e-s.6c.fr.html)
+- [Vue d'ensemble BACnet MS/TP E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/bacnet-ms-tp-e-s.6d.fr.html)
+</script>

@@ -1,0 +1,36 @@
+<script type="text/markdown" data-help-name="EWIO2 - Digital OUT">
+Digitalen Ausgang eines EWIO2 schalten.
+
+### Details
+Mit jedem Knoten kann ein digitaler Ausgang eines EWIO2 angesprochen werden.
+Es können die digitalen Ausgänge des EWIO2 oder eines an den EWIO2 angeschlossenen Modbus RTU I/Os bzw. BACnet MS/TP I/Os geschalten werden.
+
+Der am Knoten-Eingang empfangene Schaltzustand wird am digitalen Ausgang des EWIO2 gesetzt.
+
+Als Knoten-Ausgang wird der aktuelle Schaltzustand des digitalen Ausgang ausgegeben, wenn der digitale Ausgang durch ein Knoten-Eingangssignal geschaltet wurde.
+
+### Eingänge
+: payload (boolean | number) : Gewünschter Schaltzustand
+
+### Ausgänge
+: payload (boolean) : Aktueller Schaltzustand
+
+### Konfigurations-Menü
+Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
+Alle am EWIO2 vorhandenen digitalen Ausgänge inkl. Modbus RTU I/Os und BACnet MS/TP I/Os werden geladen und können ausgewählt werden.
+Für den ausgewählten Anschluss wird live der Schaltzustand angezeigt, sowie ob für der Anschluss der Handbetieb konfiguriert ist.
+
+### Eigenschaften
+: EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
+: Anschluss (select) : Digitaler Ausgang des EWIO2
+: Status (boolean) : Schaltzustand des digitalen Ausgang
+: Handbetrieb (boolean) : Handbetrieb
+: Name (string) : Benutzerdefinierte Bezeichnung des Knotens
+
+### Links
+- [Metz Connect](https://www.metz-connect.com)
+- [Übersicht EWIO2 Datenlogger](https://www.metz-connect.com/home/produkte/c-logline/energie-controlling/datenlogger.6a.de.html)
+- [Übersicht EWIO2 Ethernet I/O](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/ethernet-i-os.69.de.html)
+- [Übersicht Modbus RTU I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/modbus-rtu-i-os.6c.de.html)
+- [Übersicht BACnet MS/TP I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/bacnet-ms-tp-i-os.6d.de.html)
+</script>

@@ -1,0 +1,321 @@
+<script type="text/javascript">
+
+    /**
+     * Stores counter information of connected EWIO2, that the current value is available if counter in config menu is changed.
+     * Object is deleted when EWIO2 is changed (changed by selecting another element in dropdown or opening configuration menu).
+     * @memberof counterNode
+     */
+    var counters = {};
+
+    /**
+     * Stores datapoint information of connected EWIO2, that the current value is available if datapoint in config menu is changed.
+     * Object is deleted when EWIO2 is changed (changed by selecting another element in dropdown or opening configuration menu).
+     * @memberof counterNode
+     */
+    var datapoints = {};
+
+    /**
+     * Receives an object with all values of an counter. If it is the currently selected counter, the settings in counter configuration menu are updated.
+     * @memberof counterNode
+     */
+    RED.comms.subscribe("publish/ewio2/config/counter/#", function (topic, msg) {
+        const recvPrevIoPort = topic.split("/")[5];
+        const recvNodeId = topic.split("/")[4];
+        const ioType = topic.split("/")[3];
+        // get ewio2 id of disabled select
+        var ewio2Id =$("#node-input-ewio2 option").eq($("#node-input-ewio2").prop("selectedIndex")).val();
+        // message was received for the currently selected EWIO2
+        if(ewio2Id == recvNodeId) {
+            // only add options for the choosen type
+            if(msg.ioType == ioType) {
+                // the msg must contain 5 or 6 (with "updatedInput") elements
+                if(Object.keys(msg).length === 5 || Object.keys(msg).length === 6) {
+                    const dropdownValue = JSON.stringify({"nodeId": recvNodeId, "host": msg.host, "addr": msg.id});
+                    if(!optionExists(dropdownValue, "#node-input-counter")) {
+                        $("#node-input-counter").append($('<option>', {
+                            value: dropdownValue,
+                            text: msg.name + " @ " + msg.bus
+                        }));
+                    }
+                    // temporarilly store received msgs (only for this EWIO2), to have the current value
+                    counters[dropdownValue] = msg;
+                    // set value of the choosen and received IO port
+                    let selectedIoPort = $('#node-input-counter').val();
+                    log("selected: " + selectedIoPort + "; recvPrevIoPort: " + recvPrevIoPort);
+                    // get an array of all received counters (which are stored in dropdown)
+                    const allCntr = [...$("#node-input-counter")[0].options].map(o => o.value);
+                    // check if the received previous io port (counter) is also available in array
+                    const cntrFound = allCntr.find(function(cntr){return cntr === recvPrevIoPort});
+                    // set received previous io port as currently selected, if valid and if available in array
+                    if(recvPrevIoPort != "undefined" && cntrFound) {
+                        selectedIoPort = recvPrevIoPort;
+                    }
+                    // set "last" value as selected value in dropdown
+                    $('#node-input-counter').val(selectedIoPort);
+                }
+            }
+        }
+    });
+
+    /**
+     * Receives an object with all values of an counter. If it is the currently selected counter, the settings in counter configuration menu are updated.
+     * @memberof counterNode
+     */
+    RED.comms.subscribe("publish/ewio2/config/datapoints/#", function (topic, msg) {
+        const recvPrevIoPort = topic.split("/")[5];
+        const recvNodeId = topic.split("/")[4];
+        const ioType = topic.split("/")[3];
+        // get ewio2 id of disabled select
+        var ewio2Id =$("#node-input-ewio2 option").eq($("#node-input-ewio2").prop("selectedIndex")).val();
+        // message was received for the currently selected EWIO2
+        if(ewio2Id == recvNodeId) {
+            // only add options for the choosen type
+            if(msg.ioType == ioType) {
+                // the msg must contain at least 10 elements (11 with additional error reason)
+                if(Object.keys(msg).length >= 10) {
+                    const dropdownValue = JSON.stringify({"nodeId": recvNodeId, "host": msg.host, "dp": msg.id, "cntr": msg.counterId});
+                    if(!optionExists(dropdownValue, "#node-input-datapoint")) {
+                        $("#node-input-datapoint").append($('<option>', {
+                            value: dropdownValue,
+                            text: msg.name
+                        }));
+                    }
+                    // temporarilly store received msgs (only for this EWIO2), to have the current value
+                    datapoints[dropdownValue] = msg;
+                    // set value of the choosen and received IO port
+                    let selectedIoPort = $('#node-input-datapoint').val();
+                    log("selected dp: " + selectedIoPort + "; recvPrevIoPort: " + recvPrevIoPort);
+                    // get an array of all received datapoints (which are stored in dropdown)
+                    const allDp = [...$("#node-input-datapoint")[0].options].map(o => o.value);
+                    // check if the received previous io port (datapoint) is also available in array
+                    const dpFound = allDp.find(function(dp){return dp === recvPrevIoPort});
+                    // set received previous io port as currently selected, if valid and if available in array
+                    if(recvPrevIoPort != "undefined" && dpFound) {
+                        selectedIoPort = recvPrevIoPort;
+                    }
+                    // when livedata are received --> do not reset datapoint
+                    if(msg.source === "requested") {
+                        // set "last" value as selected value in dropdown
+                        $('#node-input-datapoint').val(selectedIoPort);
+                    }
+                    // trigger datapoint change, to set correct prevIoPort
+                    $('#node-input-datapoint').trigger("change");
+                    // enable all html elements on valid datapoint values
+                    enableHtmlElements(true, "counter");
+                    enableHtmlElements(true, "datapoint");
+                    // enable counter specific html elements
+                    enableCounterSpecificElements(true);
+                }
+            }
+        }
+    });
+
+    /**
+     * Receives a message, that all counters have been sent.
+     * @memberof counterNode
+     */
+    RED.comms.subscribe("publish/ewio2/config/done", function (topic, msg) {
+        if (msg === "counter") {
+            // trigger ioport change, to set correct prevIoPort (counter)
+            $('#node-input-counter').trigger("change", [true]);
+        }
+        else if (msg === "datapoints") {
+            // trigger ioport change, to set correct prevIoPort (datapoint)
+            $('#node-input-datapoint').trigger("change");
+        }
+    });
+
+    RED.nodes.registerType("EWIO2 - Meter",{
+        category: "METZ CONNECT",
+        color: "#4682B4",
+        defaults: {
+            ewio2: { value: "", type: "EWIO2" },
+            name: { value:"" },
+            counter: { value: "" },
+            datapoint: { value: "" },
+            range: { value: "" },
+            value: { value: "" },
+            timestamp: { value: "" },
+            flags: { value: "" },
+            outputTimestamp: { value: "" },
+            outputFlags: { value: "" }
+        },
+        outputs:1,
+        icon: "ewio2-counter.svg",
+        label: function() { 
+            return this.name||"EWIO2 - Meter";
+        },
+        oneditprepare: function() {
+            let prevCounter = this.counter;
+            let prevDatapoint = this.datapoint;
+            initDatapointRanges(this);
+            const nodeId = this.id;
+            let prevEwio2Data = getConfigNodeDataStructure(this.ewio2, nodeId);
+            // save the current selected EWIO2, when configuration menu item "ewio2" gets focus. Forward to Node-RED runtime, to be able to publish value again to Node-RED editor.
+            $("#node-input-ewio2").focus(function () {
+                prevEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
+            })
+            // whenever EWIO2 configuration is changed, async function is called (to "await" for connection)
+            $("#node-input-ewio2").change(async function () {
+                log("onchange ewio2: prev: " + prevEwio2Data.data.configNodeId + "; current: " + this.value);
+                // clear counter dropdown and locally stored data
+                $("#node-input-counter option").remove();
+                counters = {};
+                // clear datapoint dropdown and locally stored data
+                $("#node-input-datapoint option").remove();
+                datapoints = {};
+                // clear value, range, timestamp and flags
+                $("#node-input-value").val("");
+                $("#node-input-range").val("");
+                $("#node-input-timestamp").val("");
+                $("#node-input-flags").val("");
+
+                // clear and hide error msg
+                $('#label-error-status').text("");
+                $('#section-error-status').hide();
+
+                // disable counter and datapoint for every selected EWIO2 configuration node
+                enableIoPortElement("counter", false);
+                enableIoPortElement("datapoint", false);
+                // disable counter specific html elements
+                enableCounterSpecificElements(false);
+                let configNodeId = this.value;
+                if (!configNodeId || configNodeId == "_ADD_") {
+                    return;
+                }
+                // disable all html elements only when a valid EWIO2 configuration node is available
+                enableHtmlElements(false, "counter");
+                enableHtmlElements(false, "datapoint");
+                try {
+                    // one EWIO2 is selected in configuration menu and customer changes to another EWIO2 > close websocket connection of "unselected" EWIO2
+                    if (prevEwio2Data.data.configNodeId != "" && prevEwio2Data.data.configNodeId != "_ADD_") {
+                        const selectedEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
+                        if (JSON.stringify(prevEwio2Data.data) !== JSON.stringify(selectedEwio2Data.data)) {
+                            log(prevEwio2Data.data.configNodeId + " deselected -> close websocket connection");
+                            await closeDeleteWebsocket(prevEwio2Data.data);
+                            log("close websocket done");
+                        }
+                    }
+                    // reset prevCounter, if another EWIO2 is choosen
+                    log(prevCounter + " typeof: " + typeof prevCounter);
+                    if (prevCounter) {
+                        log("prevCounter-nodeId: " + JSON.parse(prevCounter).nodeId + "; current EWIO2 id: " + this.value);
+                        if (JSON.parse(prevCounter).nodeId != this.value) {
+                            prevCounter = "";
+                            log("reset prevCounter to ''");
+                        }
+                    }
+                    log("prevCounter to send: " + prevCounter);
+                    await getEwio2ConfigData(getConfigNodeDataStructure(configNodeId, nodeId), "counter", prevCounter, nodeId, undefined);
+                    prevEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
+                }
+                catch (error) {
+                    log("counter onchange EWIO2 error");
+                    log(error);
+                }
+            });
+            $("#node-input-counter").change(async function (event, paramWsMsgRcvd) {
+                prevCounter = this.value;
+                log("onchange counter: " + prevCounter);
+                // only save value, if a value is choosen. Nothing choosen not possible, due to dropdown
+                if(this.value != "") {
+                    // reset prevCounter when counter was changed via dropdown
+                    if (!paramWsMsgRcvd) {
+                        prevDatapoint = "";
+                    }
+                    $("#node-input-datapoint option:selected").prop("selected", false)
+                    $("#node-input-datapoint option").remove();
+                    // clear value, range, timestamp and flags
+                    $("#node-input-value").val("");
+                    $("#node-input-range").val("");
+                    $("#node-input-timestamp").val("");
+                    $("#node-input-flags").val("");
+                    await getEwio2ConfigData(getConfigNodeDataStructure(JSON.parse($('#node-input-counter').val()).nodeId, nodeId), "datapoints", prevDatapoint, nodeId, JSON.parse(prevCounter). addr);
+                }
+            });
+            $("#node-input-datapoint").change(async function () {
+                // only save value, if a value is choosen. Nothing choosen not possible, due to dropdown
+                if(this.value != "") {
+                    prevDatapoint = this.value;
+                    // set value, range, timestamp and flags of the newly choosen datapoint
+                    const receivedValue = datapoints[this.value].value;
+                    $("#node-input-value").val(receivedValue);
+                    const receivedRange = datapoints[this.value].range;
+                    if (receivedRange) {
+                        $("#node-input-range").val(dpRanges.get(receivedRange));
+                    }
+                    const receivedTimestamp = datapoints[this.value].timestamp;
+                    $("#node-input-timestamp").val(receivedTimestamp);
+                    let receivedFlags = datapoints[this.value].flags;
+                    $("#node-input-flags").val(receivedFlags);
+                }
+            });
+        },
+        oneditsave: async function() {
+            log("counter: oneditsave");
+            let configNodeId = $("#node-input-ewio2").val() || this.ewio2;
+            await prepareCloseWebsocket(configNodeId, this.id);
+        },
+        oneditcancel: async function() {
+            log("counter: oneditcancel");
+            let configNodeId = $("#node-input-ewio2").val() || this.ewio2;
+            await prepareCloseWebsocket(configNodeId, this.id);
+        },
+        oneditdelete: async function() {
+            log("counter: oneditdelete; node-ID: " + this.id);
+            let configNodeId = $("#node-input-ewio2").val() || this.ewio2;
+            await prepareCloseWebsocket(configNodeId, this.id);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="EWIO2 - Meter">
+    <div id="section-error-status" class="form-row" hidden>
+        <label id="label-error-status" style="color:red; width:inherit"><i class="fa fa-warning"></i> Error</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-ewio2"><i class="fa fa-microchip"></i> EWIO2</label>
+        <input type="text" id="node-input-ewio2">
+    </div>
+    <div class="form-row">
+        <label for="node-input-counter"><i class="fa fa-tachometer"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.counter"></label>
+        <select id="node-input-counter" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-datapoint"><i class="fa fa-database"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.datapoint"></label>
+        <select id="node-input-datapoint" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-bullseye"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.value"></label>
+        <input type="text" id="node-input-value" disabled>
+    </div>
+    <div class="form-row">
+        <label for="node-input-range"><i class="fa fa-arrows-h"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.range"></label>
+        <input type="text" id="node-input-range" disabled>
+    </div>
+    <div class="form-row">
+        <label for="node-input-timestamp"><i class="fa fa-clock-o"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.timestamp"></label>
+        <input type="text" id="node-input-timestamp" disabled>
+    </div>
+    <div class="form-row">
+        <label for="node-input-flags"><i class="fa fa-flag"></i> Flags</label>
+        <input type="text" id="node-input-flags" disabled>
+    </div>
+    <hr>
+    <div class="form-row">
+        <h4><span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.nodeOutput"></h4>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-outputTimestamp"  style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-outputTimestamp" style="width: auto" data-i18n="@metz-connect/node-red-ewio2/ewio2:label.timestamp"></label>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-outputFlags" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-outputFlags" style="width: auto">Flags</label>
+    </div>
+    <hr>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.name"></label>
+        <input type="text" id="node-input-name"/>
+    </div>
+</script>

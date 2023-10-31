@@ -1,0 +1,235 @@
+[
+    {
+        "id": "3173a628b2d66266",
+        "type": "tab",
+        "label": "EWIO2 digital IOs example",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "2ac7de410865861a",
+        "type": "EWIO2 - Digital OUT",
+        "z": "3173a628b2d66266",
+        "ewio2": "2be52e78ad6f9362",
+        "name": "digital output relais 4",
+        "ioportDo": "{\"nodeId\":\"2be52e78ad6f9362\",\"host\":\"127.0.0.1\",\"addr\":\"03_0\"}",
+        "value": "",
+        "manualMode": "",
+        "x": 740,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "36eeef8c9859531d",
+        "type": "EWIO2 - Digital IN",
+        "z": "3173a628b2d66266",
+        "ewio2": "2be52e78ad6f9362",
+        "name": "digital input 2",
+        "ioportDi": "{\"nodeId\":\"2be52e78ad6f9362\",\"host\":\"127.0.0.1\",\"addr\":\"01_0\"}",
+        "value": "",
+        "valueText": "14",
+        "pulseCntr": "",
+        "inputSignal": "",
+        "risingEdge": true,
+        "fallingEdge": true,
+        "x": 260,
+        "y": 200,
+        "wires": [
+            [
+                "2ac7de410865861a"
+            ]
+        ]
+    },
+    {
+        "id": "b1bc511a78026123",
+        "type": "comment",
+        "z": "3173a628b2d66266",
+        "name": "",
+        "info": "Direct connection between a digital input and a digital output.\nDigital input is configured as signal input.\nWhen signal of digital input changes, the digital output also changes to the same value (HIGH or LOW).\n",
+        "x": 1040,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "fd8a1f66ad515abc",
+        "type": "EWIO2 - Digital IN",
+        "z": "3173a628b2d66266",
+        "ewio2": "2be52e78ad6f9362",
+        "name": "digital input 1",
+        "ioportDi": "{\"nodeId\":\"2be52e78ad6f9362\",\"host\":\"127.0.0.1\",\"addr\":\"00_0\"}",
+        "value": "",
+        "valueText": "1",
+        "pulseCntr": "",
+        "inputSignal": true,
+        "risingEdge": true,
+        "fallingEdge": "",
+        "x": 260,
+        "y": 420,
+        "wires": [
+            [
+                "ef051454e85bed75"
+            ]
+        ]
+    },
+    {
+        "id": "ea43f4b5084e0775",
+        "type": "EWIO2 - Digital OUT",
+        "z": "3173a628b2d66266",
+        "ewio2": "2be52e78ad6f9362",
+        "name": "digital output 2",
+        "ioportDo": "{\"nodeId\":\"2be52e78ad6f9362\",\"host\":\"127.0.0.1\",\"addr\":\"05_0\"}",
+        "value": "",
+        "manualMode": "",
+        "x": 1000,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ef051454e85bed75",
+        "type": "switch",
+        "z": "3173a628b2d66266",
+        "name": "every 5th signal",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "1",
+                "vt": "num",
+                "v2": "4",
+                "v2t": "num"
+            },
+            {
+                "t": "gte",
+                "v": "5",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 500,
+        "y": 420,
+        "wires": [
+            [
+                "5dd20c7b9e11cbfe"
+            ],
+            [
+                "2051ed36212a610b",
+                "ef1719206d6255e1"
+            ]
+        ]
+    },
+    {
+        "id": "5dd20c7b9e11cbfe",
+        "type": "change",
+        "z": "3173a628b2d66266",
+        "name": "set false",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 720,
+        "y": 380,
+        "wires": [
+            [
+                "ea43f4b5084e0775"
+            ]
+        ]
+    },
+    {
+        "id": "2051ed36212a610b",
+        "type": "change",
+        "z": "3173a628b2d66266",
+        "name": "set true",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 720,
+        "y": 480,
+        "wires": [
+            [
+                "ea43f4b5084e0775"
+            ]
+        ]
+    },
+    {
+        "id": "ef1719206d6255e1",
+        "type": "change",
+        "z": "3173a628b2d66266",
+        "name": "reset pulse counter",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "counter",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 520,
+        "wires": [
+            [
+                "fd8a1f66ad515abc"
+            ]
+        ]
+    },
+    {
+        "id": "5c8642b74d19e4a9",
+        "type": "comment",
+        "z": "3173a628b2d66266",
+        "name": "",
+        "info": "Every 5th change in value of digital input, digital output is set HIGH, otherwise LOW.\nDigital input is configured as pulser counter.\nAfter 5 changes in value of digital input, pulse counter is reset.\n",
+        "x": 1240,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "2be52e78ad6f9362",
+        "type": "EWIO2",
+        "name": "Office3",
+        "host": "127.0.0.1",
+        "hostTemp": "{\"address\":\"127.0.0.1\",\"location\":\"Office3\",\"hostname\":\"EWIO2-a58651\",\"nrAvailable\":1,\"nrRunning\":1,\"hwModell\":\"EWIO2-M-BM\",\"swVersion\":\"1.5.40\",\"serial\":\"00000018\",\"mac\":\"70:b3:d5:a5:86:51\"}",
+        "encryption": false,
+        "tlsConfig": ""
+    }
+]

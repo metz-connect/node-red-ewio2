@@ -1,0 +1,273 @@
+[
+    {
+        "id": "7c883d2dabdec997",
+        "type": "tab",
+        "label": "measuring and control example",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3f78ef6761783395",
+        "type": "EWIO2 - Analog IN",
+        "z": "7c883d2dabdec997",
+        "ewio2": "01c248131f1ea3d5",
+        "name": "analog input 1",
+        "ioportAi": "{\"nodeId\":\"01c248131f1ea3d5\",\"host\":\"127.0.0.1\",\"addr\":\"00_0\"}",
+        "valueConfig": "3",
+        "value": "3.90",
+        "inputSignal": true,
+        "valueUpdate": false,
+        "x": 260,
+        "y": 340,
+        "wires": [
+            [
+                "026503b9a8828def",
+                "cac70e7edd217bd1"
+            ]
+        ]
+    },
+    {
+        "id": "026503b9a8828def",
+        "type": "switch",
+        "z": "7c883d2dabdec997",
+        "name": "less 3.5",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "3.5",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 460,
+        "y": 320,
+        "wires": [
+            [
+                "7f52035303d77d76"
+            ],
+            [
+                "c010dcf237ecd001"
+            ]
+        ]
+    },
+    {
+        "id": "d8dc29cafa28d194",
+        "type": "EWIO2 - Digital OUT",
+        "z": "7c883d2dabdec997",
+        "ewio2": "01c248131f1ea3d5",
+        "name": "digital output 1",
+        "ioportDo": "{\"nodeId\":\"01c248131f1ea3d5\",\"host\":\"127.0.0.1\",\"addr\":\"04_0\"}",
+        "value": "",
+        "manualMode": "",
+        "x": 880,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7f52035303d77d76",
+        "type": "change",
+        "z": "7c883d2dabdec997",
+        "name": "set true",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 280,
+        "wires": [
+            [
+                "d8dc29cafa28d194"
+            ]
+        ]
+    },
+    {
+        "id": "c010dcf237ecd001",
+        "type": "change",
+        "z": "7c883d2dabdec997",
+        "name": "set false",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 320,
+        "wires": [
+            [
+                "d8dc29cafa28d194"
+            ]
+        ]
+    },
+    {
+        "id": "41bc6ad624c4d2d0",
+        "type": "change",
+        "z": "7c883d2dabdec997",
+        "name": "set true",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 360,
+        "wires": [
+            [
+                "854c06e3bc8290d1"
+            ]
+        ]
+    },
+    {
+        "id": "854c06e3bc8290d1",
+        "type": "EWIO2 - Digital OUT",
+        "z": "7c883d2dabdec997",
+        "ewio2": "01c248131f1ea3d5",
+        "name": "digital output 2",
+        "ioportDo": "{\"nodeId\":\"01c248131f1ea3d5\",\"host\":\"127.0.0.1\",\"addr\":\"05_0\"}",
+        "value": "",
+        "manualMode": "",
+        "x": 880,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cac70e7edd217bd1",
+        "type": "switch",
+        "z": "7c883d2dabdec997",
+        "name": "greater 7.5",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "7.5",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 470,
+        "y": 380,
+        "wires": [
+            [
+                "41bc6ad624c4d2d0"
+            ],
+            [
+                "88871ce564f3ba8f"
+            ]
+        ]
+    },
+    {
+        "id": "88871ce564f3ba8f",
+        "type": "change",
+        "z": "7c883d2dabdec997",
+        "name": "set false",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 400,
+        "wires": [
+            [
+                "854c06e3bc8290d1"
+            ]
+        ]
+    },
+    {
+        "id": "6daddd297d4e845a",
+        "type": "comment",
+        "z": "7c883d2dabdec997",
+        "name": "",
+        "info": "Measuring and control example, like shell script in \"EWIO2 User Manual\".\nGet every change of analog input 1.\nIf value less 3.5, set digital output 1, otherwise reset.\nIf value greater 7.5, set digital output 2, otherwise reset.\n",
+        "x": 1080,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1ac9552b02175670",
+        "type": "inject",
+        "z": "7c883d2dabdec997",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "trigger",
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "3f78ef6761783395"
+            ]
+        ]
+    },
+    {
+        "id": "01c248131f1ea3d5",
+        "type": "EWIO2",
+        "name": "Office",
+        "host": "127.0.0.1",
+        "hostTemp": "{\"address\":\"127.0.0.1\",\"location\":\"Office\",\"hostname\":\"EWIO2-a58651\",\"nrAvailable\":1,\"nrRunning\":1,\"hwModell\":\"EWIO2-M-BM\",\"swVersion\":\"1.5.42\",\"serial\":\"00000018\",\"mac\":\"70:b3:d5:a5:86:51\"}",
+        "encryption": false,
+        "tlsConfig": ""
+    }
+]

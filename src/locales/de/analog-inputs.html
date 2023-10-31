@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="EWIO2 - Analog IN">
+Wert von analogem Eingang eines EWIO2 lesen.
+
+### Details
+Mit jedem Knoten kann ein analoger Eingang eines EWIO2 angesprochen werden.
+Es können die analogen Eingänge des EWIO2 oder eines an den EWIO2 angeschlossenen Modbus RTU I/Os bzw. BACnet MS/TP I/Os gelesen werden.
+
+Der Knoten reagiert auf alle Änderungen des analogen Eingangs und gibt diese am Ausgang des Knoten aus.
+Vorbedingung hierfür ist, dass 'Wertänderung am EWIO2' im Konfigurations-Menü gesetzt ist.
+Um Sensorrauschen zu unterdrücken, kann ein 'filter'-Knoten genutzt werden, der mit dem Ausgang dieses Knoten verbunden wird.
+
+Der Knoten kann durch Eingangssignale den analogen Eingang des EWIO2 auslesen:
+- **topic**: "trigger"
+  - Analogen Eingang lesen
+
+Vorbedingung hierfür ist, dass 'Eingangssignal am Knoten' im Konfigurations-Menü gesetzt ist.
+
+### Eingänge
+: topic (string) : "trigger" (Istwert lesen)
+
+### Ausgänge
+: payload (number) : Aktueller Wert des analogen Eingang
+
+### Konfigurations-Menü
+Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
+Alle am EWIO2 vorhandenen analogen Eingänge inkl. Modbus RTU I/Os und BACnet MS/TP I/Os werden geladen und können ausgewählt werden.
+Für den ausgewählten Anschluss wird live die Konfiguration, sowie der aktuelle Istwert angezeigt.
+Die Konfiguration kann geändert werden. Jede Änderung der Konfiguration wirkt sofort am EWIO2!
+
+### Eigenschaften
+: EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
+: Anschluss (select) : Analoger Eingang des EWIO2
+: Konfig. (select) : Aktuelle Konfiguration
+: Wert (number) : Aktueller Wert
+: Name (string) : Benutzerdefinierte Bezeichnung des Knotens
+
+### Links
+- [Metz Connect](https://www.metz-connect.com)
+- [Übersicht EWIO2 Datenlogger](https://www.metz-connect.com/home/produkte/c-logline/energie-controlling/datenlogger.6a.de.html)
+- [Übersicht EWIO2 Ethernet I/O](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/ethernet-i-os.69.de.html)
+- [Übersicht Modbus RTU I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/modbus-rtu-i-os.6c.de.html)
+- [Übersicht BACnet MS/TP I/Os](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/bacnet-ms-tp-i-os.6d.de.html)
+</script>

@@ -1,0 +1,36 @@
+<script type="text/markdown" data-help-name="EWIO2 - Analog OUT">
+Régler la sortie analogique de EWIO2.
+
+### Détails
+Chaque nœud représente une sortie analogique d'un EWIO2.
+Toute sortie analogique de l'EWIO2 et des E/S Modbus RTU ou BACnet MS/TP connectées à l'EWIO2 peut être utilisée.
+
+La valeur souhaitée, qui a été reçue comme entrée de nœud, sera réglée sur la sortie analogique de EWIO2.
+
+La sortie du nœud est la valeur actuelle de la sortie analogique, si la sortie analogique a été réglée par le signal d'entrée du nœud.
+
+### Entrées
+: payload (number) : Valeur souhaitée
+
+### Sorties
+: payload (number) : Valeur actuelle
+
+### Menu de configuration
+Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
+Toutes les sorties analogiques disponibles de l'EWIO2 et des E/S Modbus RTU ou BACnet MS/TP connectées à l'EWIO2 sont chargées et peuvent être sélectionnées.
+Les données en direct de la valeur et, si le port est configuré en mode manuel, sont affichées pour le port sélectionné.
+
+### Propriétés
+: EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
+: Port (select) : Sortie analogique de EWIO2
+: Valeur (number) : Valeur de la sortie analogique
+: Mode man. (boolean) : Mode manuel
+: Nom (string) : Nom du nœud défini par l'utilisateur
+
+### Liens
+- [Metz Connect](https://www.metz-connect.com/home.1e.fr.html)
+- [Vue d'ensemble EWIO2 Enregistreur de données](https://www.metz-connect.com/home/produits/c-logline/controlling-nerg-tique/enregistreur-de-donn-es.6a.fr.html)
+- [Vue d'ensemble EWIO2 Ethernet E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/ethernet-e-s.69.fr.html)
+- [Vue d'ensemble Modbus RTU E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/modbus-rtu-e-s.6c.fr.html)
+- [Vue d'ensemble BACnet MS/TP E/S](https://www.metz-connect.com/home/produits/c-logline/composants-e-s/bacnet-ms-tp-e-s.6d.fr.html)
+</script>

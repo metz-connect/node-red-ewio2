@@ -1,0 +1,336 @@
+<script type="text/javascript">
+
+    /**
+     * Stores IO information of connected EWIO2, that the current value is available if IO port in config menu is changed.
+     * Object is deleted when EWIO2 is changed (changed by selecting another element in dropdown or opening configuration menu).
+     * @memberof analogInNode
+     */
+    var analogIns = {};
+
+    /**
+     * Flag that is set if EWIO2 in dropdown has changed. Required to enable / disable analog input configureation dropdown.
+     * @memberof analogInNode
+     */
+    var ewio2Changed = false;
+
+    /**
+     * Receives an object with all values of an analog IN pin. If it is the currently selected analog IN pin, the settings in analog IN configuration menu are updated.
+     * @memberof analogInNode
+     */
+    RED.comms.subscribe("publish/ewio2/config/ai/#", function (topic, msg) {
+        const recvUser = topic.split("/")[6];
+        const recvPrevIoPort = topic.split("/")[5];
+        const recvNodeId = topic.split("/")[4];
+        const ioType = topic.split("/")[3];
+        // get ewio2 id of disabled select
+        var ewio2Id =$("#node-input-ewio2 option").eq($("#node-input-ewio2").prop("selectedIndex")).val();
+        // message was received for the currently selected EWIO2
+        if(ewio2Id == recvNodeId) {
+            // only add options for the choosen type
+            if(msg.ioType == ioType) {
+                // the msg must contain at least 7 elemtens (7 for e.g. setValue response; 8 for livedata (contains also moduleName))
+                if(Object.keys(msg).length >= 7) {
+                    const dropdownValue = JSON.stringify({"nodeId": recvNodeId, "host": msg.host, "addr": msg.address});
+                    if(!optionExists(dropdownValue, "#node-input-ioportAi")) {
+                        const moduleName = ((msg.moduleName) && (msg.moduleName != "")) ? " @ " + msg.moduleName : "";
+                        $("#node-input-ioportAi").append($('<option>', {
+                            value: dropdownValue,
+                            text: msg.name + moduleName
+                        }));
+                    }
+                    // temporarilly store received msgs (only for this EWIO2), to have the current value and pulse counter value and flag
+                    analogIns[dropdownValue] = msg;
+                    // set value and pulse counter radio button (true / false) of the choosen and received IO port
+                    let selectedIoPort = $('#node-input-ioportAi').val();
+                    log("selected: " + selectedIoPort + "; recvPrevIoPort: " + recvPrevIoPort);
+                    if(recvPrevIoPort != "undefined") {
+                        const recvPrevIoPortObj = JSON.parse(recvPrevIoPort);
+                        const configNode = RED.nodes.node(ewio2Id);
+                        if (configNode && recvPrevIoPortObj.nodeId === ewio2Id && recvPrevIoPortObj.host == configNode.host) {
+                            selectedIoPort = recvPrevIoPort;
+                        }
+                    }
+                    // set "last" value as selected value in dropdown
+                    $('#node-input-ioportAi').val(selectedIoPort);
+                    // trigger ioport change, to set correct prevIoPort
+                    $('#node-input-ioportAi').trigger("change");
+                    // enable all html elements on valid analog IN values
+                    enableHtmlElements(true, "ioportAi");
+                    let enableConfigFlag = false;
+                    // values of EWIO2 (e.g. analog input configuration) can only be set by Administrator or Operator (handled by websocket-manager). This disables config dropdown for user Standard.
+                    if (recvUser === "Administrator" || recvUser === "Operator") {
+                        enableConfigFlag = true;
+                    }
+                    // enable analog in specific html elements
+                    enableAiSpecificElements(true, enableConfigFlag);
+                }
+            }
+        }
+    });
+
+    /**
+     * Frontend part of analog IN node.
+     * @memberof analogInNode
+     */
+    RED.nodes.registerType('EWIO2 - Analog IN', {
+        category: 'METZ CONNECT',
+        color: '#4682B4',
+        defaults: {
+            ewio2: { value: "", type: "EWIO2" },
+            name: { value: "" },
+            ioportAi: { value: "", required: true },
+            valueConfig: { value: "" },
+            value: { value: "" },
+            inputSignal: { value: "" },
+            valueUpdate: { value: "" }
+        },
+        // set pulse counter value input
+        inputs:1,
+        outputs:1,
+        icon: "ewio2-analog-input.svg",
+        label: function() {
+            return this.name||"EWIO2 - Analog IN";
+        },
+        oneditprepare: function() {
+            let prevIoPort = this.ioportAi;
+            const nodeId = this.id;
+            let prevEwio2Data = getConfigNodeDataStructure(this.ewio2, nodeId);
+            let prevConfig;
+            initSensorAI(this);
+            const node = this;
+            // analog input sensor configuration info
+            $('#btn-info-aiConfig').tooltip({
+                //use 'of' to link the tooltip to your specified input
+                position: { of: '#node-input-valueConfig', my: 'left top', at: 'left bottom' },
+                content: "No info!"
+            });
+            function showAiInfoTooltip(aiInfoBtn) {
+                let aiConfigInfo;
+                aiConfigInfo = node._("@metz-connect/node-red-ewio2/ewio2:status.aiConfigInfo");
+                aiInfoBtn.tooltip({ items: "#btn-info-aiConfig", content: aiConfigInfo} );
+                aiInfoBtn.tooltip("open");
+            }
+            // show analog input info
+            $('#btn-info-aiConfig').on({
+                "click": function (e) {
+                    e.preventDefault();
+                    showAiInfoTooltip($(this));
+                },
+                "mouseover": function (e) {
+                    if ($("#btn-info-aiConfig").is(":enabled")) {
+                        e.preventDefault();
+                        showAiInfoTooltip($(this));
+                    }
+                },
+                "mouseout": function () {
+                    $(this).tooltip("disable");
+                }
+            });
+            // analog input sensor configuration current exclampation mark tooltip
+            $('#lbl-aiConfig-exclamationMark').tooltip({
+                //use 'of' to link the tooltip to your specified input
+                position: { of: '#node-input-valueConfig', my: 'left top', at: 'left bottom' },
+                content: "No info!"
+            });
+            function showAiCurrentTooltip(aiCurrentLabel) {
+                let aiConfigWarning;
+                aiConfigWarning = node._("@metz-connect/node-red-ewio2/ewio2:status.aiConfigWarning");
+                aiCurrentLabel.tooltip({ items: "#lbl-aiConfig-exclamationMark", content: aiConfigWarning} );
+                aiCurrentLabel.tooltip("open");
+            }
+            // show analog input current warning
+            $('#lbl-aiConfig-exclamationMark').on({
+                "click": function (e) {
+                    e.preventDefault();
+                    showAiCurrentTooltip($(this));
+                },
+                "mouseover": function (e) {
+                    e.preventDefault();
+                    showAiCurrentTooltip($(this));
+                },
+                "mouseout": function () {
+                    $(this).tooltip("disable");
+                }
+            });
+            // save the current selected EWIO2, when configuration menu item "ewio2" gets focus. Forward to Node-RED runtime, to be able to publish value again to Node-RED editor.
+            $("#node-input-ewio2").focus(function () {
+                prevEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
+            })
+            // whenever EWIO2 configuration is changed, async function is called (to "await" for connection)
+            $("#node-input-ewio2").change(async function () {
+                ewio2Changed = true;
+                log("onchange ewio2: prev: " + prevEwio2Data.data.configNodeId + "; current: " + this.value);
+                // clear IO-Port dropdown, configuration dropdown and locally stored data
+                $("#node-input-ioportAi option").remove();
+                $("#node-input-valueConfig option").remove();
+                analogIns = {};
+                // clear value
+                $("#node-input-value").val("");
+                // clear and hide error msg
+                $('#label-error-status').text("");
+                $('#section-error-status').hide();
+
+                // disable IO port for every selected EWIO2 configuration node
+                enableIoPortElement("ioportAi", false);
+                // disable analog in specific html elements
+                enableAiSpecificElements(false, false);
+                let configNodeId = this.value;
+                if (!configNodeId || configNodeId == "_ADD_") {
+                    return;
+                }
+                // disable all html elements only when a valid EWIO2 configuration node is available
+                enableHtmlElements(false, "ioportAi");
+                try {
+                    // one EWIO2 is selected in configuration menu and customer changes to another EWIO2 > close websocket connection of "unselected" EWIO2
+                    if (prevEwio2Data.data.configNodeId != "" && prevEwio2Data.data.configNodeId != "_ADD_") {
+                        const selectedEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
+                        if (JSON.stringify(prevEwio2Data.data) !== JSON.stringify(selectedEwio2Data.data)) {
+                            log(prevEwio2Data.data.configNodeId + " deselected -> close websocket connection");
+                            await closeDeleteWebsocket(prevEwio2Data.data);
+                            log("close websocket done");
+                        }
+                    }
+                    // reset prevIoPort, if another EWIO2 is choosen
+                    log(prevIoPort + " typeof: " + typeof prevIoPort);
+                    if (prevIoPort) {
+                        log("prevIoPort-nodeId: " + JSON.parse(prevIoPort).nodeId + "; current EWIO2 id: " + this.value);
+                        if (JSON.parse(prevIoPort).nodeId != this.value) {
+                            prevIoPort = "";
+                            log("reset prevIoPort to ''");
+                        }
+                    }
+                    log("prevIoPort to send: " + prevIoPort);
+                    await getEwio2ConfigData(getConfigNodeDataStructure(configNodeId, nodeId), "ai", prevIoPort, nodeId, undefined);
+                    prevEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
+                }
+                catch (error) {
+                    log("analog in onchange EWIO2 error");
+                    log(error);
+                }
+            });
+            $("#node-input-ioportAi").change(async function () {
+                let portUpdated = false;
+                if (prevIoPort != this.value) {
+                    portUpdated = true;
+                }
+                prevIoPort = this.value;
+                log("onchange ioport: " + prevIoPort);
+                // only save value, if a value is choosen. Nothing choosen not possible, due to dropdown
+                if(this.value != "") {
+                    // set value and manual mode radio button (true / false) of the newly choosen IO port
+                    const receivedValue = analogIns[this.value].value;
+                    $("#node-input-value").val(receivedValue);
+                    // only clear and reload sensor config dropdown, when config has changed or EWIO2 changed (in dropdown) or config has changed. Otherwise the dropdown options were flickering
+                    if (portUpdated || ewio2Changed || (analogIns[this.value].updatedInput & 0x02)) {
+                        ewio2Changed = false;
+                        // clear configuration dropdown
+                        $("#node-input-valueConfig option").remove();
+                        const receivedModuleName = analogIns[this.value].moduleName
+                        const receivedConfig = analogIns[this.value].config;
+                        let sensorEntries = sensorAI.entries();
+                        if (receivedModuleName == "MR-CI4") {
+                            sensorEntries = sensorAI_mrCi4.entries();
+                        }
+                        // show sensor configuration values in configuration dropdowns
+                        for (const sensor of sensorEntries){
+                            if(!optionExists(sensor[0], "#node-input-valueConfig")) {
+                                $("#node-input-valueConfig").append($('<option>', {
+                                    value: sensor[0],
+                                    text: sensor[1]
+                                }));
+                            }
+                        }
+                        // select received sensor configuration
+                        $("#node-input-valueConfig").val(receivedConfig);
+                        // show the exclamation mark for current (Ampere) configurations
+                        if (receivedConfig >= "26" && receivedConfig <= "29") {
+                            $("#lbl-aiConfig-exclamationMark").show();
+                        }
+                        else {
+                            $("#lbl-aiConfig-exclamationMark").hide();
+                        }
+                    }
+                }
+            });
+            // save the current selected sensor configuration, when configuration menu item "configuration" gets focus.
+            // This is needes to detect a change of sensor configuration.
+            $("#node-input-valueConfig").focus(function () {
+                prevConfig = this.value;
+            })
+            $("#node-input-valueConfig").change(async function () {
+                if (this.value && prevConfig) {
+                    if (this.value != prevConfig) {
+                        await setAiConfig(getConfigNodeDataStructure($("#node-input-ewio2").val(), nodeId), this.value, $("#node-input-ioportAi").val(), nodeId);
+                        // show the exclamation mark for current (Ampere) configurations
+                        if (this.value >= "26" && this.value <= "29") {
+                            $("#lbl-aiConfig-exclamationMark").show();
+                        }
+                        else {
+                            $("#lbl-aiConfig-exclamationMark").hide();
+                        }
+                        prevConfig = this.value;
+                    }
+                }
+            });
+        },
+        oneditsave: async function() {
+            log("analog IN: oneditsave");
+            let configNodeId = $("#node-input-ewio2").val() || this.ewio2;
+            await prepareCloseWebsocket(configNodeId, this.id);
+        },
+        oneditcancel: async function() {
+            log("analog IN: oneditcancel");
+            let configNodeId = $("#node-input-ewio2").val() || this.ewio2;
+            await prepareCloseWebsocket(configNodeId, this.id);
+        },
+        oneditdelete: async function() {
+            log("analog IN: oneditdelete; node-ID: " + this.id);
+            let configNodeId = $("#node-input-ewio2").val() || this.ewio2;
+            await prepareCloseWebsocket(configNodeId, this.id);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="EWIO2 - Analog IN">
+    <div id="section-error-status" class="form-row" hidden>
+        <label id="label-error-status" style="color:red; width:inherit"><i class="fa fa-warning"></i> Error</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-ewio2"><i class="fa fa-microchip"></i> EWIO2</label>
+        <input type="text" id="node-input-ewio2">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ioportAi"><i class="fa fa-wrench"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.port"></label>
+        <select id="node-input-ioportAi" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-valueConfig"><i class="fa fa-cogs"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.valueConfig"></label>
+        <select id="node-input-valueConfig"></select>
+        <button id="btn-info-aiConfig" class="editor-button" >
+            <i class="fa fa-fw fa-info"></i>
+        </button>
+        <label id="lbl-aiConfig-exclamationMark" style="width: auto"><i class="fa fa-exclamation-triangle"></i></label>
+    </div>
+    <div id="section-value" class="form-row">
+        <label for="node-input-value"><i class="fa fa-bullseye"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.value"></label>
+        <input type="text" id="node-input-value" disabled>
+    </div>
+    <hr>
+    <div class="form-row">
+        <h4><span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.trigger"></h4>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-inputSignal" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-inputSignal" style="width: auto" data-i18n="@metz-connect/node-red-ewio2/ewio2:label.inputSignal"></label>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-valueUpdate" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-valueUpdate" style="width: auto" data-i18n="@metz-connect/node-red-ewio2/ewio2:label.valueUpdate"></label>
+    </div>
+    <hr>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.name"></label>
+        <input type="text" id="node-input-name"/>
+    </div>
+</script>
+

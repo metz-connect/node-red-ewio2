@@ -1,0 +1,33 @@
+<script type="text/markdown" data-help-name="EWIO2">
+Stellt die Verbindung zu einem EWIO2 Datenlogger bzw. Ethernet I/O von Metz Connect her.
+
+### Details
+Dieser Knoten stellt im Hintergrund eine Verbindung zu einem EWIO2 her.
+Die Verbindung zum EWIO2 selber (dieser EWIO2, mit interner IP-Adresse 127.0.0.1) oder zu einem im Netzwerk vorhanden EWIO2 ist möglich.
+Diese Verbindung wird von den EWIO2 I/O- und Zähler-Knoten genutzt.
+
+Beim Öffnen der Konfiguration wird automatisch für 3s nach EWIO2-Geräten im Netzwerk gesucht.
+Der Hostname kann aus der Liste gefundener EWIO2 ausgewählt oder manuell eingegeben werden.
+Mit dem Pfeil-nach-unten-Button werden alle im Netzwerk gefundenen EWIO2 angezeigt.
+Mit dem Lupe-Button kann die Suche nach EWIO2-Geräten im Netzwerk erneut gestartet werden.
+Bei gefundenen EWIO2 können mit Hilfe des Info-Button (i) mehr Informationen über dieses Gerät angezeigt werden.
+
+### Verschlüsselung (optional)
+Die Verbindung kann verschlüsselt werden (Sichere Verbindung (SSL/TLS) aktivieren).
+Ist diese Option gesetzt, kann ein 'tls-config'-Knoten hinzugefügt werden.
+Soll nur verschlüsselt werden, muss nichts hochgeladen bzw. eingetragen werden und 'Server-Zertifikat überprüfen' darf nicht gesetzt sein.
+Um ein selbst-signiertes Zertifikat zu nutzen, muss dieses als 'CA-Zertifikat' hochgeladen werden und es muss 'Server-Zertifikat überprüfen' gesetzt sein.
+
+Als Benutzer stehen Administrator, Operator und Standard zur Verfügung.
+
+### Eigenschaften
+: Host (select | string) : Hostname oder IP-Adresse des EWIO2
+: Sichere Verbindung... (boolean) : Verschlüsselte Verbindung. Weitere Angaben im 'tls-config'-Knoten notwendig!
+: Benutzer (select) : Auswahl des Benutzers
+: Passwort (string) : Passwort für Benutzer
+: Name (string) : Benutzerdefinierte Bezeichnung des Knotens
+### Links
+- [Metz Connect](https://www.metz-connect.com)
+- [Übersicht EWIO2 Datenlogger](https://www.metz-connect.com/home/produkte/c-logline/energie-controlling/datenlogger.6a.de.html)
+- [Übersicht EWIO2 Ethernet I/O](https://www.metz-connect.com/home/produkte/c-logline/i-o-komponenten/ethernet-i-os.69.de.html)
+</script>

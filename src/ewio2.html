@@ -1,0 +1,354 @@
+<!-- load static data from backend to frontend -->
+<script type="text/javascript">
+    $.getScript('get/ewio2/scripts/inits.js')
+    .fail(function (jqxhr, settings, exception) {
+        console.error('Loading inits.js failed.', exception);
+    });
+    $.getScript('get/ewio2/scripts/backendConnection.js')
+    .fail(function (jqxhr, settings, exception) {
+        console.error('Loading backendConnection.js failed.', exception);
+    });
+</script>
+
+<script type="text/javascript">
+    let notAvailableMsg = "";
+    let notRunningMsg = "";
+    let ewio2Model;
+
+    /**
+     * Receives an object with all discovered EWIO2 from Node-RED backend. All EWIO2 are shown in dropdown menu, the ones with Node-RED support are selectable.
+     * @memberof ewio2ConfigNode
+     */
+    RED.comms.subscribe("publish/ewio2/discovered", function (topic, msg) {
+        var jsonData = JSON.parse(msg);
+        let ewio2Counter = 0;
+        let discoveredEwio2 = [];
+        jsonData.data.forEach(device => {
+            let hostnameLocation = device.hostname;
+            hostnameLocation += " - " + device.address;
+            // add "this EWIO2" (english) or "dieser EWIO2" (deutsch) to localhost address (127.0.0.1)
+            if (device.address === "127.0.0.1") {
+                hostnameLocation += " (" + jsonData.infoStrings.thisStr + ")";
+            }
+            if (device.location != "") {
+                hostnameLocation += " @ " + device.location;
+            }
+            let nodeRedTooltip = "";
+            let nodeRedDisabled = false;
+            // Node-RED not available --> show tooltip and disable option in dropdown
+            if (!device.nrAvailable) {
+                nodeRedTooltip = notAvailableMsg;
+                nodeRedDisabled = true;
+            }
+            // Node-RED not running --> show tooltip and disable option in dropdown
+            else if (!device.nrRunning) {
+                nodeRedTooltip = notRunningMsg;
+                nodeRedDisabled = true;
+            }
+            // add host with relevant settings to discoveredEwio2 array
+            const deviceStr = JSON.stringify(device);
+            discoveredEwio2.push({ label: hostnameLocation, value: device.address, temp: deviceStr, nrDisabled: nodeRedDisabled, nrTooltip: nodeRedTooltip });
+            ewio2Counter++;
+        });
+        let ewio2HostLookup = $('#node-config-lookup-host');
+        let ewio2HostInput = $('#node-config-input-host');
+        let ewio2HostInputTemp = $('#node-config-input-hostTemp');
+        /**
+         * Starts autocomplete function which creates a dropdown list of all discovered EWIO2.
+         * Only EWIO2 with Node-RED support are selectable, EWIO2 without Node-RED support are shown but inactive and not selectable.
+         * @memberof ewio2ConfigNode
+         * @param {string} searchValue - Autocomplete filters ans shows only discovered EWIO2 which fit to this search string.
+         */
+        function handleClick(searchValue) {
+            ewio2HostInput.autocomplete({
+                // list all discovered EWIO2 which are stored in discoveredEWIO2 array
+                source: discoveredEwio2,
+                minLength: 0,
+                // if an item has focus, show the tooltip (Node-RED not available or Node-RED not running or an empty string)
+                focus: function (event, ui) {
+                    $(".ui-autocomplete > li").attr("title", ui.item.nrTooltip);
+                },
+                // only EWIO2 with Node-RED support are selectable
+                select: function (event, ui) {
+                    if (!ui.item.nrDisabled) {
+                        ewio2HostInput.val(ui.item.value);
+                        ewio2HostInputTemp.val(ui.item.temp);
+                    }
+                    return false;
+                },
+                // stop the autocomplete functionality
+                close: function (event, ui) {
+                    ewio2HostInput.autocomplete("destroy")
+                }
+            }).autocomplete("instance")._renderItem = function(ul, item) {
+                // show EWIO2 without Node-RED support in disabled / "greyed-out" style
+                return $("<li>")
+                    .append("<div class='"+(item.nrDisabled ? 'ui-state-disabled' : '')+"'>" + item.label + "</div>")
+                    .appendTo(ul);
+            };
+            // show dropdown with all EWIO2 which fit to curent hostname in html field
+            ewio2HostInput.autocomplete("search", searchValue);
+        }
+        ewio2HostLookup.click(function() {
+            handleClick("");
+        });
+        ewio2HostInput.click(function() {
+            handleClick(ewio2HostInput.val());
+        });
+        // automatically show autocomplete dropdown when discovery results are received
+        handleClick();
+        endDiscovery();
+        if (ewio2Counter === 0) {
+         // disable info button if no EWIO2 were discovered
+            $("#btn-info-ewios").prop("disabled", true);
+            // and show for 3s tooltip that no EWIO2 was discovered
+            $("#btn-info-ewios").tooltip({ items: "#btn-info-ewios", content: jsonData.infoStrings.noEWIO2} );
+            $("#btn-info-ewios").tooltip("open");
+            setTimeout(function() {
+                $("#btn-info-ewios").tooltip("close");
+            }, 3000);
+        }
+    });
+
+    /**
+     * Received error messages from Node-RED backend. Shows error message in an html label, which is hidden if no error available.
+     * @memberof ewio2ConfigNode
+     */
+    RED.comms.subscribe("publish/ewio2/error/#", function (topic, msg) {
+        const recvConfigNodeId = topic.split("/")[3];
+        // get ewio2 id of disabled select
+        var ewio2Id =$("#node-input-ewio2 option").eq($("#node-input-ewio2").prop("selectedIndex")).val();
+        // message was received for the currently selected EWIO2
+        if(ewio2Id == recvConfigNodeId) {
+            // enable all html elements, except IO ports (nothing is selectable on error)
+            enableHtmlElements(true);
+            if (msg.code === "ok") {
+                // hide error label
+                $('#label-error-status').text("");
+                $('#section-error-status').hide();
+            }
+            else {
+                let errorString = "";
+                let errorToCheckOld = "";
+                let errorToCheckNew = "";
+                // if a config node is available, load the error from internationalisation framework
+                if (recvConfigNodeId) {
+                    const selectedConfigNode = RED.nodes.node(recvConfigNodeId);
+                    errorString = selectedConfigNode._(msg.code, { error: msg.message });
+                    errorToCheckOld = selectedConfigNode._("status.no_metering");
+                    errorToCheckNew = selectedConfigNode._("status.noCounter");
+                }
+                // show error label with error message
+                // do not update new error message, if new error message is "No counter configured at EWIO2!" and old error message was "EWIO2 without metering interface!"
+                // Reason: No metering interface message is received from EWIO2 before number of counters is checked
+                if (($('#label-error-status').text() != errorToCheckOld) || (errorString != errorToCheckNew)) {
+                    $('#label-error-status').text(errorString);
+                }
+                $('#section-error-status').show();
+                $("#node-input-datapoint").prop("disabled", true);
+            }
+        }
+    });
+
+    /**
+     * Adds EWIO2 user settings to settings menu of Node-RED
+     * @memberof ewio2ConfigNode
+     */
+    RED.userSettings.add({
+        id: "ewio2",
+        title: "EWIO2",
+        // create the settings pane (html) and fill with default values
+        get: function() {
+            var settingsPane = $("<div>",{id: "red-ui-settings-tab-ewio2", class: "red-ui-help"});
+            // enable / disable log flag (checkbox)
+            var row = $("<div class='red-ui-settings-row'></div>").appendTo(settingsPane);
+            var logEnable = $("<label for='user-settings-ewio2-log-enable'><input id='user-settings-ewio2-log-enable' type='checkbox'> <span data-i18n='@metz-connect/node-red-ewio2/ewio2:settings.logEnabled'></label>").appendTo(row).find("input");
+            logEnable.prop("checked",false);
+            return settingsPane;
+        },
+        // store the set values to Node-RED frontend and backend
+        close: function() {
+            const logEnableFlag = $("#user-settings-ewio2-log-enable").is(":checked");
+            // set enable log flag to Node-RED frontend
+            LOG_DEBUG = logEnableFlag;
+            const logSettings = {enable: $("#user-settings-ewio2-log-enable").is(":checked")};
+            // set enable log flag to Node-RED backend
+            $.post("put/ewio2/settings", logSettings, function() {} );
+        },
+        // load values only from Node-RED backend
+        focus: function() {
+            $.get("get/ewio2/settings", function(data) {
+                // fill html elements with received values
+                $('#user-settings-ewio2-log-enable').prop("checked", data.enable);
+            });
+        }
+    });
+
+    /**
+     * Frontend part of EWIO2 configuration node.
+     * @memberof ewio2ConfigNode
+     */
+    RED.nodes.registerType('EWIO2',{
+        category: 'config',
+        defaults: {
+            name: { value: "" },
+            host: { value: "", validate: function(v) {
+                let host = $('#node-config-input-host').val();
+                // allow upper-case, lower-case, number and the characters "." and "-". At least one character.
+                if (/^([A-Za-z0-9\.\-]+)$/.test(host)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }  },
+            hostTemp: { value: "" },
+            encryption: { value: "" },
+            tlsConfig: { value: "", type: "tls-config", required: false }
+        },
+        credentials: {
+            username: { type: "text" },
+            password: { type: "password" }
+        },
+        label: function() {
+            // if no name is available try to use host. If this is also not available use node id
+            return this.name || this.host || this.id;
+        },
+        oneditprepare: function() {
+            const node = this;
+            // if no user selected, set default to "Administrator"
+            if (!this.credentials.username) {
+                $("#node-config-input-username").val("Administrator");
+            }
+            // start discovery automatically if EWIO2 settings are opened
+            startDiscovery({thisStr: node._("ewio2Info.thisDevice"), noEWIO2: node._("ewio2Info.noEWIO2")});
+            // start discovery when button is pressed
+            $('#btn-discover-ewios').click(function (e) {
+                e.preventDefault();
+                startDiscovery({thisStr: node._("ewio2Info.thisDevice"), noEWIO2: node._("ewio2Info.noEWIO2")});
+            });
+            $('#btn-info-ewios').tooltip({
+                //use 'of' to link the tooltip to your specified input
+                position: { of: '#node-config-input-host', my: 'left top', at: 'left bottom' },
+                content: "No info!"
+            });
+            function showEwio2InfoTooltip(ewio2InfoBtn) {
+                const ewioInfo = $("#node-config-input-hostTemp").val();
+                const ewioHost = $("#node-config-input-host").val();
+                let infoStr;
+                if (ewioInfo) {
+                    const infoObj = JSON.parse(ewioInfo);
+                    // only if current host (in html field) is the same as discovered host
+                    if (infoObj.address === ewioHost) {
+                        infoStr = node._("ewio2Info.host") + ": " + infoObj.hostname;
+                        //                                                                           add "this EWIO2" (english) or "dieser EWIO2" (deutsch) to localhost address (127.0.0.1)
+                        infoStr += "<br>"+ node._("ewio2Info.ipAddress") + ": " + infoObj.address + ((infoObj.address === "127.0.0.1") ? " (" + node._("ewio2Info.thisDevice") + ")" :"");
+                        infoStr += "<br>"+ node._("ewio2Info.macAddress") + ": " + infoObj.mac;
+                        infoStr += "<br>"+ node._("ewio2Info.hwModel") + ": " + infoObj.hwModell;
+                        infoStr += "<br>"+ node._("ewio2Info.serial") + ": " + infoObj.serial;
+                        infoStr += "<br>"+ node._("ewio2Info.swVersion") + ": " + infoObj.swVersion;
+                        if (infoObj.location) {
+                            infoStr += "<br>"+ node._("ewio2Info.location") + ": " + infoObj.location;
+                        }
+                    }
+                    // user entered host does not show discovery info
+                    else {
+                        infoStr = node._("ewio2Info.noInfo");
+                    }
+                }
+                // no discovery info available
+                else {
+                    infoStr = node._("ewio2Info.noInfo");
+                }
+                ewio2InfoBtn.tooltip({ items: "#btn-info-ewios", content: infoStr} );
+                ewio2InfoBtn.tooltip("open");
+            }
+            // show EWIO2 info
+            $('#btn-info-ewios').on({
+                "click": function (e) {
+                    e.preventDefault();
+                    showEwio2InfoTooltip($(this));
+                },
+                "mouseover": function (e) {
+                    e.preventDefault();
+                    showEwio2InfoTooltip($(this));
+                },
+                "mouseout": function () {
+                    $(this).tooltip("disable");
+                }
+            });
+            // temporarilly store values
+            notAvailableMsg = this._("status.nodeRedNotAvailable");
+            notRunningMsg = this._("status.nodeRedNotRunning");
+            // check model string of EWIO2 (detect if Node-RED is running on EWIO2 or not)
+            $.post("get/ewio2/model", function(data) {
+                ewio2Model = data;
+                $('#node-config-input-encryption').trigger("change");
+            });
+            $("#node-config-input-encryption").change(function () {
+                if (this.checked) {
+                    // show tls-config row, only if SSL/TLS checkbox is enabled
+                    if (!$("#node-config-input-encryption").is(":disabled")) {
+                        $('#node-row-tlsConfig').show();
+                    }
+                }
+                else {
+                    $('#node-row-tlsConfig').hide();
+                }
+            });
+        },
+        oneditsave: async function() {
+            log("ewio2: oneditsave");
+            // close connection when EWIO2 config is saved, to re-establish connection with possibly changed certificate settings
+            await closeDeleteWebsocket(getConfigNodeDataStructure(this.id).data, this.id);
+            log("closeDeleteWebsocket frontend fct done");
+        },
+        oneditdelete: async function() {
+            log("ewio2: oneditdelete " + this.id);
+            await closeDeleteWebsocket(getConfigNodeDataStructure(this.id).data, this.id);
+            log("closeDeleteWebsocket frontend fct done");
+        },
+        oneditcancel: function() {
+            log("ewio2: oneditcancel");
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="EWIO2">
+    <div class="form-row" id="div-host-discovery">
+        <label for="node-config-input-host"><i class="fa fa-microchip"></i> <span data-i18n="label.host"></label>
+        <input type="text" id="node-config-input-host" style="width:50%;">
+        <a id="node-config-lookup-host" class="btn" data-i18n="[title]label.showEWIO2"><i id="node-config-lookup-topic-icon" class="fa fa-chevron-down"></i></a>
+        <button id="btn-discover-ewios" class="editor-button" data-i18n="[title]label.searchEWIO2">
+            <i class="fa fa-fw fa-search"></i>
+        </button>
+        <button id="btn-info-ewios" class="editor-button" >
+            <i class="fa fa-fw fa-info"></i>
+        </button>
+        <input type="hidden" id="node-config-input-hostTemp">
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-config-input-encryption" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-config-input-encryption" style="width: auto" data-i18n="label.encryption"></label>
+        <div id="node-row-tlsConfig" >
+            <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-config-input-tlsConfig"><span data-i18n="label.tlsConfig"></span></label><input type="text" style="width: 300px" id="node-config-input-tlsConfig">
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="label.user"></label>
+        <select id="node-config-input-username" style="width:70%">
+            <option value="Administrator">Administrator</option>
+            <option value="Operator">Operator</option>
+            <option value="Standard">Standard</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="label.password"></label>
+        <input type="password" id="node-config-input-password">
+    </div>
+    <hr>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="label.name"></label>
+        <input type="text" id="node-config-input-name">
+    </div>
+</script> 
