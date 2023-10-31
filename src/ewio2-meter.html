@@ -67,44 +67,49 @@
         const ioType = topic.split("/")[3];
         // get ewio2 id of disabled select
         var ewio2Id =$("#node-input-ewio2 option").eq($("#node-input-ewio2").prop("selectedIndex")).val();
+        // get counter id of disabled select
+        var cntrId =$("#node-input-counter option").eq($("#node-input-counter").prop("selectedIndex")).val();
         // message was received for the currently selected EWIO2
         if(ewio2Id == recvNodeId) {
             // only add options for the choosen type
             if(msg.ioType == ioType) {
-                // the msg must contain at least 10 elements (11 with additional error reason)
-                if(Object.keys(msg).length >= 10) {
-                    const dropdownValue = JSON.stringify({"nodeId": recvNodeId, "host": msg.host, "dp": msg.id, "cntr": msg.counterId});
-                    if(!optionExists(dropdownValue, "#node-input-datapoint")) {
-                        $("#node-input-datapoint").append($('<option>', {
-                            value: dropdownValue,
-                            text: msg.name
-                        }));
+                // message was received for the currently selected counter
+                if (cntrId && JSON.parse(cntrId).addr === msg.counterId) {
+                    // the msg must contain at least 10 elements (11 with additional error reason)
+                    if(Object.keys(msg).length >= 10) {
+                        const dropdownValue = JSON.stringify({"nodeId": recvNodeId, "host": msg.host, "dp": msg.id, "cntr": msg.counterId});
+                        if(!optionExists(dropdownValue, "#node-input-datapoint")) {
+                            $("#node-input-datapoint").append($('<option>', {
+                                value: dropdownValue,
+                                text: msg.name
+                            }));
+                        }
+                        // temporarilly store received msgs (only for this EWIO2), to have the current value
+                        datapoints[dropdownValue] = msg;
+                        // set value of the choosen and received IO port
+                        let selectedIoPort = $('#node-input-datapoint').val();
+                        log("selected dp: " + selectedIoPort + "; recvPrevIoPort: " + recvPrevIoPort);
+                        // get an array of all received datapoints (which are stored in dropdown)
+                        const allDp = [...$("#node-input-datapoint")[0].options].map(o => o.value);
+                        // check if the received previous io port (datapoint) is also available in array
+                        const dpFound = allDp.find(function(dp){return dp === recvPrevIoPort});
+                        // set received previous io port as currently selected, if valid and if available in array
+                        if(recvPrevIoPort != "undefined" && dpFound) {
+                            selectedIoPort = recvPrevIoPort;
+                        }
+                        // when livedata are received --> do not reset datapoint
+                        if(msg.source === "requested") {
+                            // set "last" value as selected value in dropdown
+                            $('#node-input-datapoint').val(selectedIoPort);
+                        }
+                        // trigger datapoint change, to set correct prevIoPort
+                        $('#node-input-datapoint').trigger("change");
+                        // enable all html elements on valid datapoint values
+                        enableHtmlElements(true, "counter");
+                        enableHtmlElements(true, "datapoint");
+                        // enable counter specific html elements
+                        enableCounterSpecificElements(true);
                     }
-                    // temporarilly store received msgs (only for this EWIO2), to have the current value
-                    datapoints[dropdownValue] = msg;
-                    // set value of the choosen and received IO port
-                    let selectedIoPort = $('#node-input-datapoint').val();
-                    log("selected dp: " + selectedIoPort + "; recvPrevIoPort: " + recvPrevIoPort);
-                    // get an array of all received datapoints (which are stored in dropdown)
-                    const allDp = [...$("#node-input-datapoint")[0].options].map(o => o.value);
-                    // check if the received previous io port (datapoint) is also available in array
-                    const dpFound = allDp.find(function(dp){return dp === recvPrevIoPort});
-                    // set received previous io port as currently selected, if valid and if available in array
-                    if(recvPrevIoPort != "undefined" && dpFound) {
-                        selectedIoPort = recvPrevIoPort;
-                    }
-                    // when livedata are received --> do not reset datapoint
-                    if(msg.source === "requested") {
-                        // set "last" value as selected value in dropdown
-                        $('#node-input-datapoint').val(selectedIoPort);
-                    }
-                    // trigger datapoint change, to set correct prevIoPort
-                    $('#node-input-datapoint').trigger("change");
-                    // enable all html elements on valid datapoint values
-                    enableHtmlElements(true, "counter");
-                    enableHtmlElements(true, "datapoint");
-                    // enable counter specific html elements
-                    enableCounterSpecificElements(true);
                 }
             }
         }
