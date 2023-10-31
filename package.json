@@ -1,7 +1,7 @@
 {
     "name": "@metz-connect/node-red-ewio2",
     "version": "1.0.0",
-    "description": "Provides nodes to access EWIO2 interfaces like IOs and meter - from Node-RED",
+    "description": "Provides nodes to access EWIO2 interfaces like IOs and metering - from Node-RED",
     "dependencies": {
         "ws": "^8.8.0",
         "crypto-js": "^4.0.0"
@@ -18,7 +18,7 @@
         "digital output",
         "analog input",
         "digital input",
-        "meter",
+        "metering",
         "m-bus",
         "modbus",
         "pulse counter"
@@ -32,7 +32,7 @@
             "analog-outputs": "src/analog-outputs.js",
             "digital-inputs": "src/digital-inputs.js",
             "analog-inputs": "src/analog-inputs.js",
-            "ewio2-meter": "src/ewio2-meter.js"
+            "ewio2-metering": "src/ewio2-metering.js"
         }
     }
 }

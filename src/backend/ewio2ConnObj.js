@@ -453,7 +453,7 @@ class Ewio2Connection {
                             connObj.publishIoPortStatus(counterElement, RED, true, false);
                         }
                     }
-                    // counter error received (no metering model)
+                    // metering error received (no metering model)
                     else if (parts.length === 3) {
                         RED.comms.publish("publish/ewio2/error/" + connObj.configNodeId, {code: ("status." + parts[2])});
                     }

@@ -130,7 +130,7 @@
         }
     });
 
-    RED.nodes.registerType("EWIO2 - Meter",{
+    RED.nodes.registerType("EWIO2 - Metering",{
         category: "METZ CONNECT",
         color: "#4682B4",
         defaults: {
@@ -146,9 +146,9 @@
             outputFlags: { value: "" }
         },
         outputs:1,
-        icon: "ewio2-counter.svg",
+        icon: "ewio2-metering.svg",
         label: function() { 
-            return this.name||"EWIO2 - Meter";
+            return this.name||"EWIO2 - Metering";
         },
         oneditprepare: function() {
             let prevCounter = this.counter;
@@ -274,7 +274,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="EWIO2 - Meter">
+<script type="text/html" data-template-name="EWIO2 - Metering">
     <div id="section-error-status" class="form-row" hidden>
         <label id="label-error-status" style="color:red; width:inherit"><i class="fa fa-warning"></i> Error</label>
     </div>

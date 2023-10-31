@@ -4,8 +4,8 @@
  */
 
 /**
- * ewio2 counter node namespace.
- * @namespace CounterNode
+ * ewio2 metering node namespace.
+ * @namespace MeteringNode
  */
 
 module.exports = function(RED) {
@@ -13,10 +13,10 @@ module.exports = function(RED) {
     * Stores settings from counter configuration menu.
     * Checks if all required settings are available, otherwise shows error status.
     * If the node is restarted, disable or deleted, this node is deregistered from registed nodes of ewio2Connections map.
-    * @memberof CounterNode
+    * @memberof MeteringNode
     * @param {Object} config - counter settings from counter menu (frontend).
     */
-    function Ewio2MeterNode(config) {
+    function Ewio2MeteringNode(config) {
         const MD5 = require("crypto-js/md5");
         const {log, pubSub} = require("./backend/general");
         RED.nodes.createNode(this,config);
@@ -158,5 +158,5 @@ module.exports = function(RED) {
             }
         }
     }
-    RED.nodes.registerType("EWIO2 - Meter",Ewio2MeterNode);
+    RED.nodes.registerType("EWIO2 - Metering",Ewio2MeteringNode);
 }

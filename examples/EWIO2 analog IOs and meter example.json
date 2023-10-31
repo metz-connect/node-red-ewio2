@@ -208,7 +208,7 @@
     },
     {
         "id": "b503657d7ab249fb",
-        "type": "EWIO2 - Meter",
+        "type": "EWIO2 - Metering",
         "z": "6be77d054c9c53e2",
         "ewio2": "ee2949049c4f01d2",
         "name": "Meter digital input 2",
@@ -230,7 +230,7 @@
     },
     {
         "id": "245347ccce1c754c",
-        "type": "EWIO2 - Meter",
+        "type": "EWIO2 - Metering",
         "z": "6be77d054c9c53e2",
         "ewio2": "ee2949049c4f01d2",
         "name": "Meter analog input 3",

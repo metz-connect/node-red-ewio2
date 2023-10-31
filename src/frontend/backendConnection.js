@@ -22,7 +22,7 @@ let getConfigLocked = false;
  * @param {string} iotype - Establish websocket connection for ioType (analog in, analog out, digital in or digital out).
  * @param {string} prevIoPort - The last selected element of the port dropdown. Used to re-select again, after new data are received.
  * @param {string} nodeId - Identification of the node, which requests EWIO2 IO data.
- * @param {string} counterAddr - Address or ID of counter (only for requesting datapoints). undefined for all other requests.
+ * @param {string} counterAddr - Address or ID of meter (only for requesting datapoints). undefined for all other requests.
  * @return {Promise} Was the connection to Node-RED runtime successful (resolve) or failed (reject).
  */
 function getEwio2ConfigData(configNodeData, iotype, prevIoPort, nodeId, counterAddr) {

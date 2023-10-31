@@ -10,7 +10,7 @@ The following nodes are included:
 - **EWIO2 - Analog OUT**: Set analog output of EWIO2
 - **EWIO2 - Digital IN**: Read digital input of EWIO2
 - **EWIO2 - Analog IN**: Read analog input of EWIO2
-- **EWIO2 - Meter**: Read meter value of EWIO2
+- **EWIO2 - Metering**: Read metering value of EWIO2
 
 # Installation
 To be able to use EWIO2 Node-RED nodes, a EWIO2 device is required.
@@ -61,10 +61,10 @@ The `Node reactes to...` section handles when node should be active:
 - `Input signal at node`: Node listens to input signals and handles them
 - `Change in value at EWIO2`: Node listens to changes at analog input of EWIO2 and provides an output when value has changed
 
-### EWIO2 - Meter
-Connection to EWIO2 via EWIO2 node is necessary, to load configuration of meter and datapoints and to get a measured values.
+### EWIO2 - Metering
+Connection to EWIO2 via EWIO2 node is necessary to load configurations of meters and datapoints and to get a measured values.
 
-Configuration of meter and datapoint must be done previously at EWIO2 web-interface.
+Configuration of meters and datapoints must be done previously at EWIO2 web-interface.
 
 Default output of node is of datatype `number`, for example: `3.86` may be the output of a measurement. Output can be configured with `Additional node output values...`. If at least one flag is set, output datatype changes to `Object`. When for example both flags are set the output of the above mentioned node may be:
 ```

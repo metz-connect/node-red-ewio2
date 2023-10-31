@@ -1,11 +1,11 @@
-<script type="text/markdown" data-help-name="EWIO2 - Meter">
+<script type="text/markdown" data-help-name="EWIO2 - Metering">
 Read meter value of EWIO2.
 
 Meter node provides current datapoint value of a meter, which is connected and configured at EWIO2.
 
 ### Details
 Every node represents one meter datapoint of an EWIO2.
-Values of **Modbus** meter, **M-Bus** meter and EWIO2 system meter can be read.
+Values of **Modbus**, **M-Bus** and EWIO2 system meters can be read.
 
 Node provides every change of measurement value to nodes output.
 Configuration of meter datapoint and range must be done previously in EWIO2 web interface.
@@ -18,15 +18,15 @@ Properties therefore can be seen in configuration menu below 'Additional node ou
 : payload (number | Object) : Current value of meter datapoint, optional are timestamp and flags.
 
 ### Configuration menu
-This node uses the connection of EWIO2 node, to connect to an EWIO2.
-All meter and datapoints, which are configured in EWIO2 web interface, can be selected.
+This node uses the connection of EWIO2 node to connect to an EWIO2.
+All meters and datapoints, which are configured in EWIO2 web interface, can be selected.
 For the selected meter datapoint, the last measured value, sampling range, timestamp and flags are shown.
 Additionally timestamp and flags can be configured as nodes output.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
-: Meter (select) : To be read meter of EWIO2
-: Datapoint (select) : To be read datapoint of meter
+: Meter (select) : Meter of EWIO2 to be read
+: Datapoint (select) : Datapoint of meter to be read
 : Value (number) : Last measured value of datapoint
 : Range (string) : Sampling range of datapoint
 : Timestamp (string) : Timestamp of last measured value

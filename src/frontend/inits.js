@@ -114,7 +114,7 @@ function optionExists (keyword, dropdownListName ) {
  * Enabled or disables the html elements of a node. Disabled while trying to connect to EWIO2 configuration node.
  * @memberof Inits
  * @param {bool} enable - Enable the elements (true) or disable them (false).
- * @param {string} ioPort - Which of the IO ports / counter / datapoint should be enabled / disabled.
+ * @param {string} ioPort - Which of the IO ports / meter / datapoint should be enabled / disabled.
  */
 function enableHtmlElements(enable, ioPort) {
     $("#node-input-ewio2").prop('disabled',!enable);
@@ -167,7 +167,7 @@ function enableAiSpecificElements(enable, enableValueConfig) {
 }
 
 /**
- * Enabled or disables especially counter related html elements.
+ * Enabled or disables especially metering related html elements.
  * @memberof Inits
  * @param {bool} enable - Enable the elements (true) or disable it (false).
  */
