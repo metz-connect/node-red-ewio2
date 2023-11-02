@@ -5,7 +5,7 @@
 Nodes to integrate **[EWIO2 data logger](https://www.metz-connect.com/home/products/c-logline/energy-controlling/data-logger.6a.en.html)** and **[EWIO2 Ethernet I/Os](https://www.metz-connect.com/home/products/c-logline/i-o-components/ethernet-i-os.69.en.html)** of **[Metz Connect](https://www.metz-connect.com/home.1e.en.html)** into **Node-RED**.
 
 The following nodes are included:
-- **EWIO2**: Establishes connection to EWIO2 data logger or Ethernet I/O of Metz Connect
+- **EWIO2** (configuration node): Establishes connection to EWIO2 data logger or Ethernet I/O of Metz Connect
 - **EWIO2 - Digital OUT**: Set digital output of EWIO2
 - **EWIO2 - Analog OUT**: Set analog output of EWIO2
 - **EWIO2 - Digital IN**: Read digital input of EWIO2
@@ -50,7 +50,7 @@ Port can be configured as signal input (boolean values) or as pulse counter (num
 
 The `Node reactes to...` section handles when node should be active:
 - `Input signal at node`: Node listens to input signals and handles them
-- `Change in value at EWIO2`: Node listens to changes at digital input of EWIO2 and provides an output when value has changed
+- `Rising edge at EWIO2`, `Falling edge at EWIO2` or `Change in value at EWIO2`: Node listens to changes at digital input of EWIO2 and provides an output when value has changed
 
 ### EWIO2 - Analog IN
 Connection to EWIO2 via EWIO2 node is necessary, to load configuration of analog inputs and to get a value of a analog input.
@@ -62,7 +62,7 @@ The `Node reactes to...` section handles when node should be active:
 - `Change in value at EWIO2`: Node listens to changes at analog input of EWIO2 and provides an output when value has changed
 
 ### EWIO2 - Metering
-Connection to EWIO2 via EWIO2 node is necessary to load configurations of meters and datapoints and to get a measured values.
+Connection to EWIO2 via EWIO2 node is necessary to load configuration of meters and datapoints and to get measured values.
 
 Configuration of meters and datapoints must be done previously at EWIO2 web-interface.
 
