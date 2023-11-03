@@ -78,4 +78,5 @@ Default output of node is of datatype `number`, for example: `3.86` may be the o
 ## EWIO2 Web interface
 Node-RED is integrated into EWIO2 Web interface. The menu items `Node-RED -> Editor` and `Node-RED -> Dashboard` are available. Node-RED can be configured within menu `System -> Node-RED`. Dashboard is accessible without login to EWIO2 Web interface
 
-# [License](LICENSE)
+# License
+[BSD-3-Clause](LICENSE)
