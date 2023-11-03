@@ -14,14 +14,17 @@ Additional values of nodes output may be timestamp and flags of last measurement
 Datatype changes then from 'number' to 'Object'!
 Properties therefore can be seen in configuration menu below 'Additional node output values...'.
 
+Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
+
 ### Outputs
 : payload (number | Object) : Current value of meter datapoint, optional are timestamp and flags.
+: topic (string) : Optional 'topic'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node to connect to an EWIO2.
 All meters and datapoints, which are configured in EWIO2 web interface, can be selected.
 For the selected meter datapoint, the last measured value, sampling range, timestamp and flags are shown.
-Additionally timestamp and flags can be configured as nodes output.
+Additionally timestamp, flags and topic can be configured as nodes output.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
@@ -33,6 +36,7 @@ Additionally timestamp and flags can be configured as nodes output.
 : Flags (string) : Flags of last measured value
 : Timestamp (boolean) : Additionl output of timestamp
 : Flags (boolean) : Additional output of flags
+: Topic (string) : Additional output of topic
 : Name (string) : User defined name of node
 
 ### Links

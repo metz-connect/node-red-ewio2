@@ -51,6 +51,8 @@
                     enableHtmlElements(true, "ioportDi");
                     // enable digital in specific html elements
                     enableDiSpecificElements(true);
+                    // enable topic html element
+                    enableTopicElement(true);
                 }
             }
         }
@@ -72,7 +74,8 @@
             pulseCntr: { value: "" },
             inputSignal: { value: "" },
             risingEdge: { value: "" },
-            fallingEdge: { value: "" }
+            fallingEdge: { value: "" },
+            outputTopic: { value: "" }
         },
         // set pulse counter value input
         inputs:1,
@@ -109,6 +112,8 @@
                 enableIoPortElement("ioportDi", false);
                 // disable digital in specific html elements
                 enableDiSpecificElements(false);
+                // disable topic html element
+                enableTopicElement(false);
                 let configNodeId = this.value;
                 if (!configNodeId || configNodeId == "_ADD_") {
                     return;
@@ -215,6 +220,14 @@
     <div id="section-fallingEdge" class="form-row">
         <input type="checkbox" id="node-input-fallingEdge" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-fallingEdge" style="width: auto" data-i18n="@metz-connect/node-red-ewio2/ewio2:label.fallingEdge"></label>
+    </div>
+    <hr>
+    <div class="form-row">
+        <h4><span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.nodeOutput"></h4>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputTopic"><i class="fa fa-map-signs"></i> Topic</label>
+        <input type="text" id="node-input-outputTopic">
     </div>
     <hr>
     <div class="form-row">

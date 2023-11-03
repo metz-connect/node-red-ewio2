@@ -27,6 +27,7 @@ module.exports = function(RED) {
         this.ioportAo = config.ioportAo;
         this.value = config.value;
         this.manualMode = config.manualMode;
+        this.outputTopic = config.outputTopic;
 
         let node = this;
         log(node, 'create node');
@@ -102,6 +103,9 @@ module.exports = function(RED) {
                         log(node, 'ao setValue ' + settedValue + ' DONE ' + node.id);
                         // on error (undefined) --> send undefinded. Otherwise send number value
                         var msg = { payload: settedValue ? (Number(settedValue)) : settedValue };
+                        if (node.outputTopic) {
+                            msg = { payload: settedValue ? (Number(settedValue)) : settedValue, topic: node.outputTopic };
+                        }
                         node.send(msg);
                     }
                     else {

@@ -63,6 +63,8 @@
                     }
                     // enable analog in specific html elements
                     enableAiSpecificElements(true, enableConfigFlag);
+                    // enable topic html element
+                    enableTopicElement(true);
                 }
             }
         }
@@ -82,7 +84,8 @@
             valueConfig: { value: "" },
             value: { value: "" },
             inputSignal: { value: "" },
-            valueUpdate: { value: "" }
+            valueUpdate: { value: "" },
+            outputTopic: { value: "" }
         },
         // set pulse counter value input
         inputs:1,
@@ -174,6 +177,8 @@
                 enableIoPortElement("ioportAi", false);
                 // disable analog in specific html elements
                 enableAiSpecificElements(false, false);
+                // disable topic html element
+                enableTopicElement(false);
                 let configNodeId = this.value;
                 if (!configNodeId || configNodeId == "_ADD_") {
                     return;
@@ -326,6 +331,14 @@
     <div class="form-row">
         <input type="checkbox" id="node-input-valueUpdate" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-valueUpdate" style="width: auto" data-i18n="@metz-connect/node-red-ewio2/ewio2:label.valueUpdate"></label>
+    </div>
+    <hr>
+    <div class="form-row">
+        <h4><span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.nodeOutput"></h4>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputTopic"><i class="fa fa-map-signs"></i> Topic</label>
+        <input type="text" id="node-input-outputTopic">
     </div>
     <hr>
     <div class="form-row">

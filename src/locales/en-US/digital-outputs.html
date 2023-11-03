@@ -9,22 +9,27 @@ The desired switching state, which was received as node input, will be set to di
 
 Output of node is the current switching state of digital output, if digital output was set by node input signal.
 
+Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
+
 ### Inputs
 : payload (boolean | number) : Desired switching state
 
 ### Outputs
 : payload (boolean) : Current switching state
+: topic (string) : Optional 'topic'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node, to connect to an EWIO2.
 All available digital outputs of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os are loaded and can be selected.
 Live data of switching state and if port is configured as manual mode, are shown for the selected port.
+Additionally a topic can be configured as nodes output.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
 : Port (select) : Digital output of EWIO2
 : State (boolean) : Switching state of digital output
 : Man. mode (boolean) : Manual mode
+: Topic (string) : Additional output of topic
 : Name (string) : User defined name of node
 
 ### Links

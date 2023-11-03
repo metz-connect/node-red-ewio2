@@ -9,22 +9,27 @@ The desired value, which was received as node input, will be set to analog outpu
 
 Output of node is the current value of analog output, if analog output was set by node input signal.
 
+Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
+
 ### Inputs
 : payload (number) : Desired value
 
 ### Outputs
 : payload (number) : Current value
+: topic (string) : Optional 'topic'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node, to connect to an EWIO2.
 All available analog outputs of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os are loaded and can be selected.
 Live data of value and if port is configured as manual mode, are shown for the selected port.
+Additionally a topic can be configured as nodes output.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
 : Port (select) : Analog output of EWIO2
 : Value (number) : Value of analog output
 : Man. mode (boolean) : Manual mode
+: Topic (string) : Additional output of topic
 : Name (string) : User defined name of node
 
 ### Links

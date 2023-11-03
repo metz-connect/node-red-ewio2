@@ -14,14 +14,17 @@ Zusätzlich zur Ausgabe des aktuellen Messwertes kann der dazugehörige Zeitstem
 Der Datentyp der Ausgabe ist dann nicht mehr 'number', sondern 'Object'!
 Die Einstellungen dazu sind im Konfigurationsmenü unter 'Zusätzliche Ausgabewerte des Knoten...' zu finden.
 
+Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom Knoten ausgegeben wird.
+
 ### Ausgänge
 : payload (number | Object) : Aktueller Wert des Zählerdatenpunktes, optional sind Zeitstempel und Flags.
+: topic (string) : Optionales 'Topic'
 
 ### Konfigurations-Menü
 Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
 Alle im EWIO2 Web-Interface konfigurierten Zähler und Datenpunkte werden geladen und können ausgewählt werden.
 Für den ausgewählten Zählerdatenpunkt wird der letzte Messwert, das Abtastintervall, der Zeitstempel und die Flags angezeigt.
-Zusätzlich zur Ausgabe des Messwertes kann der Zeitstempel und / oder die Flags ausgegeben werden.
+Zusätzlich zur Ausgabe des Messwertes kann der Zeitstempel, die Flags und ein Topic ausgegeben werden.
 
 ### Eigenschaften
 : EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
@@ -33,6 +36,7 @@ Zusätzlich zur Ausgabe des Messwertes kann der Zeitstempel und / oder die Flags
 : Flags (string) : Flags des letzten Messwertes
 : Zeitstempel (boolean) : Zustätzlich den Zeitstempel ausgeben
 : Flags (boolean) : Zusätzlich die Flags ausgeben
+: Topic (string) : Zusätzlich das Topic ausgeben
 : Name (string) : Benutzerdefinierte Bezeichnung des Knotens
 
 ### Links

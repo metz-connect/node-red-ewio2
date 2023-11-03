@@ -49,6 +49,8 @@
                     $('#node-input-ioportAo').trigger("change");
                     // enable all html elements  on valid analog OUT values
                     enableHtmlElements(true, "ioportAo");
+                    // enable topic html element
+                    enableTopicElement(true);
                 }
             }
         }
@@ -67,7 +69,8 @@
             name: { value: "" },
             ioportAo: { value: "", required: true },
             value: { value: "" },
-            manualMode: { value: "" }
+            manualMode: { value: "" },
+            outputTopic: { value: "" }
         },
         inputs:1,
         outputs:1,
@@ -99,6 +102,8 @@
 
                 // disable IO port for every selected EWIO2 configuration node
                 enableIoPortElement("ioportAo", false);
+                // disable topic html element
+                enableTopicElement(false);
                 let configNodeId = this.value;
                 if (!configNodeId || configNodeId == "_ADD_") {
                     return;
@@ -183,6 +188,14 @@
     <div class="form-row">
         <label for="node-input-manualMode"><i class="fa fa-hand-o-up"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.manualMode"></label>
         <input type="radio" id="node-input-manualMode" disabled style="display: inline-block; width: auto; vertical-align: top;">
+    </div>
+    <hr>
+    <div class="form-row">
+        <h4><span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.nodeOutput"></h4>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputTopic"><i class="fa fa-map-signs"></i> Topic</label>
+        <input type="text" id="node-input-outputTopic">
     </div>
     <hr>
     <div class="form-row">

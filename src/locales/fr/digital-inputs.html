@@ -20,23 +20,30 @@ Le nœud peut lire et configurer les entrées numériques de l'EWIO2 par les sig
 
 La condition préalable est que le paramètre "Signal d'entrée au nœud" soit défini dans le menu de configuration.
 
+En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
+
 ### Entrées
 : payload (boolean | number) : Valeur de configuration souhaitée
 : topic (string) : "trigger", "pulse" ou "counter"
 
 ### Sorties
 : payload (boolean | number) : État de commutation actuel ou valeur du compteur d'impulsions
+: topic (string) : 'topic' facultatif
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
 Toutes les entrées numériques disponibles de l'EWIO2 et des E/S Modbus RTU ou BACnet MS/TP connectées à l'EWIO2 sont chargées et peuvent être sélectionnées.
 Les données en direct de l'état de commutation ou de la valeur du compteur d'impulsions et, si le port est configuré comme compteur d'impulsions, sont affichées pour le port sélectionné.
+En outre, un 'topic' peut être configuré comme sortie de nœuds.
 
 ### Propriétés
 : EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
 : Port (select) : Entrée numérique de EWIO2
 : État / Valeur (boolean | number) : État de commutation / valeur du compteur d'impulsions de l'entrée numérique
-: Comp. d'impuls (boolean) : Le port est configuré comme compteur d'impulsions
+: Compteur d'impulsions (boolean) : Le port est configuré comme compteur d'impulsions
+: Signal d'entrée au nœud (boolean) : Le nœud réagit au signal d'entrée
+: Front montant à EWIO2 /<br>Front descendant à EWIO2 /<br>Changement de valeur à EWIO2 (boolean) : Le nœud réagit à la modification de l'entrée numérique
+: Topic (string) : Résultats supplémentaires du 'topic'
 : Nom (string) : Nom du nœud défini par l'utilisateur
 
 ### Liens

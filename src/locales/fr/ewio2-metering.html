@@ -14,25 +14,29 @@ D'autres valeurs de sortie des nœuds peuvent être l'horodatage et les drapeaux
 Le type de données passe alors de "number" à "Object" !
 Les propriétés peuvent donc être consultées dans le menu de configuration sous "Valeurs de sortie de nœuds supplémentaires...".
 
+En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
+
 ### Sorties
 : payload (number | Object) : Valeur actuelle du point de données du compteur, l'horodatage et les drapeaux sont facultatifs.
+: topic (string) : 'topic' facultatif
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
 Tous les compteurs et points de données configurés dans l'interface web EWIO2 peuvent être sélectionnés.
 Pour le point de mesure sélectionné, la dernière valeur mesurée, la plage d'échantillonnage, l'horodatage et les drapeaux sont affichés.
-En outre, l'horodatage et les drapeaux peuvent être configurés comme sortie des nœuds.
+En outre, l'horodatage, les drapeaux et le 'topic' peuvent être configurés en tant que sortie de nœuds.
 
 ### Propriétés
 : EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
 : Compteur (select) : Compteur à lire de EWIO2
-: Point de données (select) : Point de données à lire du compteur
+: P.d. données (select) : Point de données à lire du compteur
 : Valeur (number) : Dernière valeur mesurée du point de données
 : Gamme (string) : Plage d'échantillonnage du point de données
 : Horodatage (string) : Horodatage de la dernière valeur mesurée
-: Drapeaux (string) : Drapeaux de la dernière valeur mesurée
+: Flags (string) : Drapeaux de la dernière valeur mesurée
 : Horodatage (boolean) : Edition supplémentaire de l'horodatage
-: Drapeaux (boolean) : Édition supplémentaire de drapeaux
+: Flags (boolean) : Édition supplémentaire de drapeaux
+: Topic (string) : Résultats supplémentaires du 'topic'
 : Nom (string) : Nom du nœud défini par l'utilisateur
 
 ### Liens

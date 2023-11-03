@@ -177,6 +177,15 @@ function enableCounterSpecificElements(enable) {
 }
 
 /**
+ * Enabled or disables the topic (additionally topic as node output) html element.
+ * @memberof Inits
+ * @param {bool} enable - Enable the element (true) or disable it (false).
+ */
+function enableTopicElement(enable) {
+    $("#node-input-outputTopic").prop('disabled',!enable);
+}
+
+/**
  * Sets the pulse counter value and shows either pulse counter value (pulse counter) or status (signal input).
  * @memberof Inits
  * @param {string} value - Pulse counter value.

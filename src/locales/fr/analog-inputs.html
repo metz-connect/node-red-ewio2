@@ -15,23 +15,30 @@ Le nœud peut lire les valeurs d'entrée analogiques de EWIO2 par les signaux d'
 
 La condition préalable est que le paramètre "Signal d'entrée au nœud" soit défini dans le menu de configuration.
 
+En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
+
 ### Entrées
 : topic (string) : "trigger" (valeur de lecture)
 
 ### Sorties
 : payload (number) : Valeur actuelle de l'entrée analogique
+: topic (string) : 'topic' facultatif
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
 Toutes les entrées analogiques disponibles de l'EWIO2 et des E/S Modbus RTU ou BACnet MS/TP connectées à l'EWIO2 sont chargées et peuvent être sélectionnées.
 Les données en temps réel de la configuration et de la valeur sont affichées pour le port sélectionné.
 La configuration peut être modifiée. Chaque changement de configuration a un effet immédiat sur EWIO2 !
+En outre, un 'topic' peut être configuré comme sortie de nœuds.
 
 ### Propriétés
 : EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
 : Port (select) : Entrée analogique de EWIO2
 : Config. (select) : Configuration actuelle
 : Valeur (number) : Valeur actuelle
+: Signal d'entrée au nœud (boolean) : Le nœud réagit au signal d'entrée
+: Changement de valeur à EWIO2 (boolean) : Le nœud réagit à la modification de l'entrée analogique
+: Topic (string) : Résultats supplémentaires du 'topic'
 : Nom (string) : Nom du nœud défini par l'utilisateur
 
 ### Liens

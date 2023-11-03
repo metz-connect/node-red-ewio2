@@ -31,6 +31,7 @@ module.exports = function(RED) {
         this.flags = config.flags;
         this.outputTimestamp = config.outputTimestamp;
         this.outputFlags = config.outputFlags;
+        this.outputTopic = config.outputTopic;
 
         let node = this;
         log(node, 'create node');
@@ -117,13 +118,19 @@ module.exports = function(RED) {
                                         if (node.outputFlags && valueStruct.flags != "") {
                                             outMsgObj["flags"] = valueStruct.flags;
                                         }
-                                        const msg = { payload: outMsgObj };
+                                        let msg = { payload: outMsgObj };
+                                        if (node.outputTopic) {
+                                            msg = { payload: outMsgObj, topic: node.outputTopic };
+                                        }
                                         node.send(msg);
                                     }
                                     // output only value
                                     else {
                                         let outValue = Number(valueStruct.value);
-                                        const msg = { payload: outValue };
+                                        let msg = { payload: outValue };
+                                        if (node.outputTopic) {
+                                            msg = { payload: outValue, topic: node.outputTopic };
+                                        }
                                         node.send(msg);
                                     }
                                 }

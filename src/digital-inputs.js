@@ -31,6 +31,7 @@ module.exports = function(RED) {
         this.inputSignal = config.inputSignal;
         this.risingEdge = config.risingEdge;
         this.fallingEdge = config.fallingEdge;
+        this.outputTopic = config.outputTopic;
 
         let node = this;
         log(node, "create node");
@@ -121,7 +122,12 @@ module.exports = function(RED) {
                                         // pulse counter activated
                                         else {
                                             if (valueStruct.updated & 0x04) {
-                                                node.send({payload: Number(valueStruct.pulseCntrValue)});
+                                                if (node.outputTopic) {
+                                                    node.send({payload: Number(valueStruct.pulseCntrValue), topic: node.outputTopic});
+                                                }
+                                                else {
+                                                    node.send({payload: Number(valueStruct.pulseCntrValue)});
+                                                }
                                             }
                                             return;
                                         }
@@ -135,7 +141,12 @@ module.exports = function(RED) {
                                         // pulse counter deactivated
                                         else {
                                             if (valueStruct.updated & 0x04) {
-                                                node.send({payload: (valueStruct.value === "1")});
+                                                if (node.outputTopic) {
+                                                    node.send({payload: (valueStruct.value === "1"), topic: node.outputTopic });
+                                                }
+                                                else {
+                                                    node.send({payload: (valueStruct.value === "1")});
+                                                }
                                             }
                                             return;
                                         }
@@ -147,6 +158,9 @@ module.exports = function(RED) {
                             }
                             log(node, 'onConnect getValue DONE ' + node.id + '; value: ' + JSON.stringify(valueStruct, null, 4) + "; typeof: " + typeof value);
                             var msg = { payload: value };
+                            if (node.outputTopic) {
+                                msg = { payload: value, topic: node.outputTopic };
+                            }
                             node.send(msg);
                         }
                     }

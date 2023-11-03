@@ -19,7 +19,7 @@
         "inputSignal": "Signal d'entrée au nœud",
         "risingEdge": "Front montant à EWIO2",
         "fallingEdge": "Front descendant à EWIO2",
-        "valueUpdate": "Variation de la valeur à EWIO2",
+        "valueUpdate": "Changement de valeur à EWIO2",
         "counter": "Compteur",
         "datapoint": "P.d. données",
         "timestamp": "Horodatage",

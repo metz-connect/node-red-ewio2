@@ -15,23 +15,30 @@ Node can read analog input values of EWIO2 by nodes input signals:
 
 Precondition is that ' Input signal at node' is set in configuration menu.
 
+Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
+
 ### Inputs
 : topic (string) : "trigger" (read value)
 
 ### Outputs
 : payload (number) : Current value of analog input
+: topic (string) : Optional 'topic'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node, to connect to an EWIO2.
 All available analog inputs of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os are loaded and can be selected.
 Live data of configuration and value are shown for the selected port.
 Configuration can be modified. Every change in configuration has immediately an effect at EWIO2!
+Additionally a topic can be configured as nodes output.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
 : Port (select) : Analog input of EWIO2
 : Config. (select) : Current Configuration
 : Value (number) : Current value
+: Input signal at node (boolean) : Node reacts to input signal
+: Change in value at EWIO2 (boolean) : Node reacts to change of analog input
+: Topic (string) : Additional output of topic
 : Name (string) : User defined name of node
 
 ### Links

@@ -20,23 +20,30 @@ Der Knoten kann durch Eingangssignale den digitalen Eingang des EWIO2 auslesen u
 
 Vorbedingung hierfür ist, dass 'Eingangssignal am Knoten' im Konfigurations-Menü gesetzt ist.
 
+Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom Knoten ausgegeben wird.
+
 ### Eingänge
 : payload (boolean | number) : Gewünschter Konfigurationswert
 : topic (string) : "trigger", "pulse" oder "counter"
 
 ### Ausgänge
 : payload (boolean | number) : Aktueller Schaltzustand bzw. Impulszählerwert
+: topic (string) : Optionales 'Topic'
 
 ### Konfigurations-Menü
 Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
 Alle am EWIO2 vorhandenen digitalen Eingänge inkl. Modbus RTU I/Os und BACnet MS/TP I/Os werden geladen und können ausgewählt werden.
 Für den ausgewählten Anschluss wird live der Schaltzustand bzw. Impulszählerwert angezeigt, sowie ob der Anschluss als Impulszähler konfiguriert ist.
+Zusätzlich zur Ausgabe des Schaltzustands bzw. Impulszählerwertes kann ein Topic ausgegeben werden.
 
 ### Eigenschaften
 : EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
 : Anschluss (select) : Digitaler Eingang des EWIO2
 : Status / Wert (boolean | number) : Schaltzustand / Impulszählerwert des digitalen Eingang
 : Impulszähler (boolean) : Anschluss als Impulszähler konfiguriert
+: Eingangsignal am Knoten (boolean) : Knoten reagiert auf Eingangsignal
+: Steigende Flanke am EWIO2 /<br>Fallende Flanke am EWIO2 /<br>Wertänderung am EWIO2 (boolean) : Knoten reagiert auf Änderungen des digitalen Eingang
+: Topic (string) : Zusätzlich das Topic ausgeben
 : Name (string) : Benutzerdefinierte Bezeichnung des Knotens
 
 ### Links

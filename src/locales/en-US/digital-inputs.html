@@ -18,7 +18,9 @@ Node can read and configure digital inputs of EWIO2 by nodes input signals:
 - **topic**: "counter" + **payload**: number
   - Set pulse counter value
 
-Precondition is that ' Input signal at node' is set in configuration menu.
+Precondition is that 'Input signal at node' is set in configuration menu.
+
+Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
 
 ### Inputs
 : payload (boolean | number) : Desired configuration value
@@ -26,17 +28,22 @@ Precondition is that ' Input signal at node' is set in configuration menu.
 
 ### Outputs
 : payload (boolean | number) : Current switching state or pulse counter value
+: topic (string) : Optional 'topic'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node, to connect to an EWIO2.
 All available digital inputs of EWIO2 and to EWIO2 connected Modbus RTU I/Os or BACnet MS/TP I/Os are loaded and can be selected.
 Live data of switching state or pulse counter value and if port is configured as pulse counter, are shown for the selected port.
+Additionally a topic can be configured as nodes output.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
 : Port (select) : Digital input of EWIO2
 : State / Value (boolean | number) : Switching state / pulse counter value of digital input
 : Pulse count. (boolean) : Port is configured as pulse counter
+: Input signal at node (boolean) : Node reacts to input signal
+: Rising edge at EWIO2 /<br>Falling edge at EWIO2 /<br>Change in value at EWIO2 (boolean) : Node reacts to change of digital input
+: Topic (string) : Additional output of topic
 : Name (string) : User defined name of node
 
 ### Links

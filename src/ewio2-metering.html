@@ -109,6 +109,8 @@
                         enableHtmlElements(true, "datapoint");
                         // enable counter specific html elements
                         enableCounterSpecificElements(true);
+                        // enable topic html element
+                        enableTopicElement(true);
                     }
                 }
             }
@@ -143,7 +145,8 @@
             timestamp: { value: "" },
             flags: { value: "" },
             outputTimestamp: { value: "" },
-            outputFlags: { value: "" }
+            outputFlags: { value: "" },
+            outputTopic: { value: "" }
         },
         outputs:1,
         icon: "ewio2-metering.svg",
@@ -184,6 +187,8 @@
                 enableIoPortElement("datapoint", false);
                 // disable counter specific html elements
                 enableCounterSpecificElements(false);
+                // disable topic html element
+                enableTopicElement(false);
                 let configNodeId = this.value;
                 if (!configNodeId || configNodeId == "_ADD_") {
                     return;
@@ -317,6 +322,10 @@
     <div class="form-row">
         <input type="checkbox" id="node-input-outputFlags" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-outputFlags" style="width: auto">Flags</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputTopic"><i class="fa fa-map-signs"></i> Topic</label>
+        <input type="text" id="node-input-outputTopic">
     </div>
     <hr>
     <div class="form-row">

@@ -9,22 +9,27 @@ L'état de commutation souhaité, qui a été reçu en tant qu'entrée de nœud,
 
 La sortie du nœud est l'état de commutation actuel de la sortie numérique, si la sortie numérique a été activée par le signal d'entrée du nœud.
 
+En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
+
 ### Entrées
 : payload (boolean | number) : État de commutation souhaité
 
 ### Sorties
 : payload (boolean) : État de commutation actuel
+: topic (string) : 'topic' facultatif
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
 Toutes les sorties numériques disponibles de l'EWIO2 et des E/S Modbus RTU ou BACnet MS/TP connectées à l'EWIO2 sont chargées et peuvent être sélectionnées.
 Les données en direct de l'état de commutation et si le port est configuré en mode manuel, sont affichées pour le port sélectionné.
+En outre, un 'topic' peut être configuré comme sortie de nœuds.
 
 ### Propriétés
 : EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
 : Port (select) : Sortie numérique de EWIO2
 : État (boolean) : État de commutation de la sortie numérique
 : Mode man. (boolean) : Mode manuel
+: Topic (string) : Résultats supplémentaires du 'topic'
 : Nom (string) : Nom du nœud défini par l'utilisateur
 
 ### Liens

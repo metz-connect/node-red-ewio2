@@ -28,6 +28,7 @@ module.exports = function(RED) {
         this.valueConfig = config.valueConfig;
         this.inputSignal = config.inputSignal;
         this.valueUpdate = config.valueUpdate;
+        this.outputTopic = config.outputTopic;
 
         let node = this;
         log(node, 'create node');
@@ -115,6 +116,9 @@ module.exports = function(RED) {
                             }
                             log(node, 'onConnect ai getValue DONE ' + node.id + '; value: ' + JSON.stringify(valueStruct, null, 4) + "; typeof: " + typeof value);
                             var msg = { payload: value };
+                            if (node.outputTopic) {
+                                msg = { payload: value, topic: node.outputTopic };
+                            }
                             node.send(msg);
                         }
                     }
