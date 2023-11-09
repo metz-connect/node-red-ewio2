@@ -24,6 +24,10 @@
         "pulse counter"
     ],
     "license": "BSD-3-Clause",
+    "repository": "github:@metz-connect/node-red-ewio2",
+    "engines": {
+        "node": ">=16.18.1"
+    },
     "node-red": {
         "version": ">=3.0.2",
         "nodes": {
