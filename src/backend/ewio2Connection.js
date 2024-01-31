@@ -391,14 +391,14 @@ function getIoTypeDataAndStartLivedata(keyEwio2Data, ioType, counterId, RED) {
             // values of ioType not yet known --> request values
             if (!conn.isIoTypeValueKnown(ioTypeToCheck)) {
                 // not getPromise for ioType available --> store resolve and reject function of getPromise and enqueue websocket msg
-                if (!conn.getPromises[ioType] || conn.getPromises[ioType].length === 0) {
+                if (!conn.getPromises[ioTypeToCheck] || conn.getPromises[ioTypeToCheck].length === 0) {
                     log(node, 'getIoTypeDataAndStartLivedata, add promise for first IO data');
                     getIoTypeAndStartLivedataPromise = new Promise(async (resolve, reject) => {
-                        if (!conn.getPromises[ioType]) {
+                        if (!conn.getPromises[ioTypeToCheck]) {
                             // create ioType category (of getPromises)
-                            conn.getPromises[ioType] = [];
+                            conn.getPromises[ioTypeToCheck] = [];
                         }
-                        conn.getPromises[ioType].push({resolve: resolve, reject: reject});
+                        conn.getPromises[ioTypeToCheck].push({resolve: resolve, reject: reject});
                         log(node, 'no IO type data available and livedata not started');
                         let portIndicator = "all";
                         // datapoints: request given counter ID; all other (DI, AI, DO, AO, counter): request "all"
@@ -407,17 +407,17 @@ function getIoTypeDataAndStartLivedata(keyEwio2Data, ioType, counterId, RED) {
                         }
                         // request "get®config®<ioType>®all", to get all IO data of ioType
                         await conn.sendWsMessage("get®config®" + ioType + "®" + portIndicator, RED);
-                        conn.resolveAllStoredGetPromises(ioType, RED);
+                        conn.resolveAllStoredGetPromises(ioTypeToCheck, RED);
                     });
                 }
                 // getPromises to request ioType values already available --> only store resolve and reject function
                 else {
                     log(node, 'getIoTypeDataAndStartLivedata, add promise for further IO data');
                     getIoTypeAndStartLivedataPromise = new Promise((resolve, reject) => {
-                        if (!conn.getPromises[ioType]) {
-                            conn.getPromises[ioType] = [];
+                        if (!conn.getPromises[ioTypeToCheck]) {
+                            conn.getPromises[ioTypeToCheck] = [];
                         }
-                        conn.getPromises[ioType].push({resolve: resolve, reject: reject});
+                        conn.getPromises[ioTypeToCheck].push({resolve: resolve, reject: reject});
                     });
                 }
             }

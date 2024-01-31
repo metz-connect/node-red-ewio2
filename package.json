@@ -1,6 +1,6 @@
 {
     "name": "@metz-connect/node-red-ewio2",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Provides nodes to access EWIO2 interfaces like IOs and metering - from Node-RED",
     "dependencies": {
         "ws": "^8.8.0",

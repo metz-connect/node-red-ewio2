@@ -473,7 +473,7 @@ class Ewio2Connection {
                         const recvCntrDpAddr = parts[0] + "®" + parts[2] + "®" + parts[3];
                         connObj.values[recvCntrDpAddr] = datapointsElement;
                         // only publish received livedata (no ws-setup promise (getPromise) available)
-                        if (connObj.#noGetPromisePending(datapointsElement.ioType)) {
+                        if (connObj.#noGetPromisePending(datapointsElement.ioType + "®" + datapointsElement.counterId)) {
                             connObj.publishIoPortStatus(datapointsElement, RED, true, false);
                         }
                     }
