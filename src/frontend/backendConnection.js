@@ -46,7 +46,10 @@ function getEwio2ConfigData(configNodeData, iotype, prevIoPort, nodeId, counterA
                 resolve();
             })
             .fail(function(jqXHR, textStatus) {
-                alert("connection error getEwio2ConfigData fct: " + textStatus);
+                getConfigLocked = false;
+                // enable all html elements, except IO ports (nothing is selectable on error)
+                enableHtmlElements(true);
+                showConnectionError(nodeId);
                 reject(textStatus);
             })
         }
@@ -58,16 +61,17 @@ function getEwio2ConfigData(configNodeData, iotype, prevIoPort, nodeId, counterA
  * Sends the request with all data as content to Node-RED runtime, which closes and deletes the websocket.
  * @memberof BackendConnection
  * @param {Object} configNodeData - Object with configuration node ID,  host, user (optional), pw (optional) and encryption flag, used as key for ewio2Connections object. Optional values may be overwritten by Node-RED runtime.
+ * @param {string} nodeId - Identification of the node, to get the error message.
  * @return {Promise} Was the websocket closed successfully (resolve).
  */
-function closeDeleteWebsocket(configNodeData) {
+function closeDeleteWebsocket(configNodeData, nodeId) {
     log("close delete websocket frontend reached");
     const closeDeleteWsPromise = new Promise((resolve, reject) => {
         $.post("put/ewio2/closeDeleteWebsocket", configNodeData, function(data, textStatus) {
             resolve();
         })
         .fail(function(jqXHR, textStatus) {
-            alert("connection error closeDeleteWebsocket fct: " + textStatus);
+            showConnectionError(nodeId);
             reject(textStatus);
         })
     });
@@ -90,9 +94,21 @@ function setAiConfig(configNodeData, configVal, ioPort, nodeId) {
             resolve();
         })
         .fail(function(jqXHR, textStatus) {
-            alert("connection error setAiConfig fct: " + textStatus);
+            showConnectionError(nodeId);
             reject(textStatus);
         })
     });
     return setAiConfigPromise;
+}
+
+/**
+ * Gets the noConnection error message and shows it in configuration menu.
+ * @memberof BackendConnection
+ * @param {string} nodeId - Identification of the node, to get the error message.
+ */
+function showConnectionError(nodeId) {
+    const selectedNode = RED.nodes.node(nodeId);
+    var errorString = selectedNode._("@metz-connect/node-red-ewio2/ewio2:status.noConnection");
+    $('#label-error-status').text(errorString);
+    $('#section-error-status').show();
 }

@@ -32,6 +32,7 @@
         "notAuthorized": "Falsche Benutzerdaten!",
         "configNodeMissing": "Fehlerhafte EWIO2 Konfiguration!",
         "notReachable": "Verbindung zum EWIO2 fehlgeschlagen! __error__",
+        "noConnection": "Keine Verbindung zum EWIO2",
         "portCommError": "Kommunikationsproblem mit Anschluss!",
         "timeout": "Timeout, EWIO2 nicht erreichbar! __error__",
         "timeoutWsMsg": "Kommunikationsproblem mit EWIO2!",

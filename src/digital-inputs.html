@@ -126,7 +126,7 @@
                         const selectedEwio2Data = getConfigNodeDataStructure(this.value, nodeId);
                         if (JSON.stringify(prevEwio2Data.data) !== JSON.stringify(selectedEwio2Data.data)) {
                             log(prevEwio2Data.data.configNodeId + " deselected -> close websocket connection");
-                            await closeDeleteWebsocket(prevEwio2Data.data);
+                            await closeDeleteWebsocket(prevEwio2Data.data, nodeId);
                             log("close websocket done");
                         }
                     }

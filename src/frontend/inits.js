@@ -256,7 +256,7 @@ async function prepareCloseWebsocket(configNodeId, nodeId) {
     }
     log(configNodeId + " close and delete websocket connection")
     const dataStruct = getConfigNodeDataStructure(configNodeId, nodeId);
-    await closeDeleteWebsocket(dataStruct.data);
+    await closeDeleteWebsocket(dataStruct.data, nodeId);
     log("close delete websocket done");
 }
 
