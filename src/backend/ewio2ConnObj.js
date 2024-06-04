@@ -88,12 +88,19 @@ class Ewio2Connection {
     async establishConnection(RED) {
         const node = RED.nodes.getNode(this.configNodeId);
         try {
-            var tan = await this.#connectRestApi(RED);
+            var tan = await this.connectRestApi(RED, null);
             // set the received TAN
             this.tan = tan;
             log(node, 'connect REST API done for: ' + this.host + ', TAN: ' + this.tan)
-            await this.#connectWebsocket(RED);
-            log(node, 'connect websocket done');
+            // for IO type measurements only REST API connection is necessary (no further websocker connection)
+            if (this.requestedIoType === "measurements") {
+                // resolve all connection promises
+                this.#resolveAllStoredConnPromises(RED);
+            }
+            else {
+                await this.#connectWebsocket(RED);
+                log(node, 'connect websocket done');
+            }
         }
         catch (error) {
             log(node, 'establishConnection fct error: ' + error);
@@ -195,10 +202,10 @@ class Ewio2Connection {
  * Establish REST API connection to EWIO, to request session-ID (TAN). Connection can be encrypted (https) or not (http).
  * @memberof Ewio2ConnObj
  * @param {Object} RED - Node-RED "infrastructure", used to publish events to frontend.
+ * @param {Object} measurementSettings - Settings required to get historic measurement data out of EWIO2 database.
  * @return {Promise} Connection status to EWIO2 REST API, resolve (with received TAN) or reject (with error).
  */
-    #connectRestApi(RED) {
-        const fs = require('fs');
+    connectRestApi(RED, measurementSettings = null) {
         this.connState = ConnectedState.REST_API_CONNECTING;
         const node = RED.nodes.getNode(this.configNodeId);
         log(node, 'connectRestApi, host: ' + this.host);
@@ -223,12 +230,19 @@ class Ewio2Connection {
                         servername: connObj.tlsConfig.servername,
                         ALPNProtocols: connObj.tlsConfig.alpnprotocol
                     };
-                    log(node, 'port: ' + opts.port);
+                    if (measurementSettings) {
+                        opts.path = "/cgi-bin/getParamFromServer.cgi?username=" + connObj.user + "&password=" + measurementSettings.pw + "&type=db_data&module=" + measurementSettings.dp + "_" + measurementSettings.range + "_" + measurementSettings.quantity;
+                    }
+                    log(node, 'opts.path: ' + opts.path);
                     var reqHttps = https.request(opts, function(res){
-                        res.on("data", function(data) {
-                            connObj.connState = ConnectedState.REST_API_CONNECTED;
-                            resolve(connObj.#calcTanMd5Hash(data, connObj.pw));
+                        var completeMsg = "";
+                        res.on("data", function (chunk) {
+                            completeMsg += chunk;
                         });
+                        res.on("end", function() {
+                            connObj.connState = ConnectedState.REST_API_CONNECTED;
+                            resolve((connObj.requestedIoType === "measurements") ? completeMsg : connObj.#calcTanMd5Hash(completeMsg, connObj.pw));
+                        })
                     }).end();
                 }
                 // TLS config missing
@@ -243,13 +257,20 @@ class Ewio2Connection {
             // HTTP
             else {
                 const http = require('http');
-                const url = "http://" + this.host + "/cgi-bin/getParamFromServer.cgi?username=" + this.user + "&password=" + this.pw + "&type=single_id&module=login";
+                var url = "http://" + this.host + "/cgi-bin/getParamFromServer.cgi?username=" + this.user + "&password=" + this.pw + "&type=single_id&module=login";
+                if (measurementSettings) {
+                    url = "http://" + this.host + "/cgi-bin/getParamFromServer.cgi?username=" + this.user + "&password=" + measurementSettings.pw + "&type=db_data&module=" + measurementSettings.dp + "_" + measurementSettings.range + "_" + measurementSettings.quantity;
+                }
                 log(node, 'url: ' + url);
                 var req = http.get(url, function (response) {
-                    response.on("data", function (data) {
-                        connObj.connState = ConnectedState.REST_API_CONNECTED;
-                        resolve(connObj.#calcTanMd5Hash(data, connObj.pw));
+                    var completeMsg = "";
+                    response.on("data", function (chunk) {
+                        completeMsg += chunk;
                     });
+                    response.on("end", function() {
+                        connObj.connState = ConnectedState.REST_API_CONNECTED;
+                        resolve((connObj.requestedIoType === "measurements") ? completeMsg : connObj.#calcTanMd5Hash(completeMsg, connObj.pw));
+                    })
                 });
                 req.on("error", function(err) {
                     reject (err);

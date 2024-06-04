@@ -24,7 +24,9 @@
         "datapoint": "P.d. données",
         "timestamp": "Horodatage",
         "range": "Gamme",
-        "nodeOutput": "Valeurs de sortie de nœuds supplémentaires..."
+        "nodeOutput": "Valeurs de sortie de nœuds supplémentaires...",
+        "loadMeasurements": "Charger les valeurs mesurées de la base de données...",
+        "quantity": "Quantité"
     },
     "status": {
         "nodeRedNotAvailable": "Node-RED non disponible!",
@@ -50,10 +52,12 @@
         "missingPw": "Mot de passe manquant!",
         "missingEnc": "Drapeau de chiffrement manquant!",
         "manualModeActive": "Mode manuel actif!",
-        "noBoolOrNumber": "'boolean' ou 'number' selon les besoins!",
-        "noNumber": "'number' selon les besoins!",
-        "wrongMsgTopicType": "'string' en tant que thème d'entrée requis",
-        "wrongMsgTopic": "Sujet d'entrée inconnu",
+        "noBoolOrNumber": "Pas de signal d'entrée de type 'boolean' ou 'number'!",
+        "noNumber": "Pas de signal d'entrée de type 'number'!",
+        "noObject": "La charge utile du signal d'entrée n'est pas de type 'object'!",
+        "noFromTo": "Il manque un élément 'from' et/ou 'to' dans la charge utile du signal d'entrée!",
+        "wrongMsgTopicType": "'string' en tant que thème d'entrée requis!",
+        "wrongMsgTopic": "Sujet d'entrée inconnu!",
         "notPulseCntr": "Le port n'est pas un compteur d'impulsions!",
         "triggerInputInactive": "Déclenchement sur signal d'entrée désactivé",
         "insufficientAccessRights": "Pas d'autorisation pour l'utilisateur: Standard!",
@@ -63,7 +67,9 @@
         "aiConfigInfo": "La configuration sera réglée immédiatement àEWIO2 du changement!",
         "no_metering": "EWIO2 sans interface de mesure!",
         "noCounter": "Pas de compteur configuré à EWIO2!",
-        "noData": "Aucune donnée n'est encore disponible!"
+        "noData": "Aucune donnée n'est encore disponible!",
+        "getMeasurementsFailed": "L'extraction des données a échoué!",
+        "loginFailed": "La connexion n'a pas permis de récupérer les données"
     },
     "ewio2Info": {
         "noEWIO2": "Pas de EWIO2 découvert!",

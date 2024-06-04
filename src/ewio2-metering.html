@@ -146,8 +146,10 @@
             flags: { value: "" },
             outputTimestamp: { value: "" },
             outputFlags: { value: "" },
-            outputTopic: { value: "" }
+            outputTopic: { value: "" },
+            quantity: { value: "" }
         },
+        inputs:1,
         outputs:1,
         icon: "ewio2-metering.svg",
         label: function() { 
@@ -326,6 +328,14 @@
     <div class="form-row">
         <label for="node-input-outputTopic"><i class="fa fa-map-signs"></i> Topic</label>
         <input type="text" id="node-input-outputTopic">
+    </div>
+    <hr>
+    <div class="form-row">
+        <h4><span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.loadMeasurements"></h4>
+    </div>
+    <div class="form-row">
+        <label for="node-input-quantity"><i class="fa fa-sort-amount-asc"></i> <span data-i18n="@metz-connect/node-red-ewio2/ewio2:label.quantity"></label>
+        <input type="number" id="node-input-quantity">
     </div>
     <hr>
     <div class="form-row">

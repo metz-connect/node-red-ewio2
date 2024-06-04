@@ -159,7 +159,7 @@ async function getConfigData(keyEwio2Data, ioType, prevIoPort, counterId, nodeId
  * @param {string} ioPortAddr - Combinate of port ((extension) module) and address, stringified with config node ID and host (e.g. {"nodeId":"75e235318e89127f","host":"ewio2device","addr":"02_0"}).
  * @param {string} nodeId - Identification of the node, which requests EWIO2 IO data.
  * @param {Object} RED - Node-RED "infrastructure", used to publish events to frontend.
- * @param {Object} tlsConfig - TLS config data object, to establish a encrypted connection
+ * @param {Object} tlsConfig - TLS config data object, to establish a encrypted connection.
  * @return {number} The value which was retrieved from EWIO2.
  */
 async function getValue(keyEwio2Data, ioType, ioPortAddr, nodeId, RED, tlsConfig) {
@@ -170,38 +170,42 @@ async function getValue(keyEwio2Data, ioType, ioPortAddr, nodeId, RED, tlsConfig
         counterId = JSON.parse(ioPortAddr).cntr;
     }
     let conn = await initConnectionToEwio2(keyEwio2Data, ioType, ioPortAddr, nodeId, counterId, RED, tlsConfig, false);
-    // reset IO port immediately after connection is established (before publishing data to Node-RED frontend and backend), to avoid that user selected port in dropdown is overwritten by livedata of another port
-    conn.requestedIoPort = undefined;
-    if (conn) {
-        let ioTypeToCheck = ioType + "®";
-        let ioTypeToFit = ioType + "®";
-        if (ioPortAddr) {
-            // create temp variables of ioPort
-            const ioPortObj = JSON.parse(ioPortAddr);
-            if (ioType === "datapoints" && counterId !== "none") {
-                ioTypeToCheck += counterId + "®";
-                ioTypeToFit += ioPortObj.cntr + "®" + ioPortObj.dp;
-            }
-            else {
-                ioTypeToFit += ioPortObj.addr;
-            }
-            // publish value of ioPort to Node-RED frontend and backend
-            for (ioKey in conn.values) {
-                if (conn.values.hasOwnProperty(ioKey) && ioKey.toString().startsWith(ioTypeToCheck)) {
-                    if (ioKey === ioTypeToFit) {
-                        // set Bit3: value was requested from node (not published via livedata)
-                        conn.values[ioKey].updatedInput |= 0x08;
-                        conn.publishIoPortStatus(conn.values[ioKey], RED, true, true);
+    if (ioType === "measurements") {
+        return conn;
+    }
+    else {
+        // reset IO port immediately after connection is established (before publishing data to Node-RED frontend and backend), to avoid that user selected port in dropdown is overwritten by livedata of another port
+        conn.requestedIoPort = undefined;
+        if (conn) {
+            let ioTypeToCheck = ioType + "®";
+            let ioTypeToFit = ioType + "®";
+            if (ioPortAddr) {
+                // create temp variables of ioPort
+                const ioPortObj = JSON.parse(ioPortAddr);
+                if (ioType === "datapoints" && counterId !== "none") {
+                    ioTypeToCheck += counterId + "®";
+                    ioTypeToFit += ioPortObj.cntr + "®" + ioPortObj.dp;
+                }
+                else {
+                    ioTypeToFit += ioPortObj.addr;
+                }
+                // publish value of ioPort to Node-RED frontend and backend
+                for (ioKey in conn.values) {
+                    if (conn.values.hasOwnProperty(ioKey) && ioKey.toString().startsWith(ioTypeToCheck)) {
+                        if (ioKey === ioTypeToFit) {
+                            // set Bit3: value was requested from node (not published via livedata)
+                            conn.values[ioKey].updatedInput |= 0x08;
+                            conn.publishIoPortStatus(conn.values[ioKey], RED, true, true);
+                        }
+                    }
+                }
+                // start livedata channel and register digital input port, digital output port or datapoint for livedata updates
+                if (conn.ws) {
+                    if (ioType === "di" || ioType === "ai" || (ioType === "datapoints" && counterId !== "none")) {
+                        await conn.sendWsMessage("get®livedata®" + ioTypeToFit, RED);
                     }
                 }
             }
-            // start livedata channel and register digital input port, digital output port or datapoint for livedata updates
-            if (conn.ws) {
-                if (ioType === "di" || ioType === "ai" || (ioType === "datapoints" && counterId !== "none")) {
-                    await conn.sendWsMessage("get®livedata®" + ioTypeToFit, RED);
-                }
-            }
-
         }
     }
 }

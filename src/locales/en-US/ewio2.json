@@ -24,7 +24,9 @@
         "datapoint": "Datapoint",
         "timestamp": "Timestamp",
         "range": "Range",
-        "nodeOutput": "Additional node output values..."
+        "nodeOutput": "Additional node output values...",
+        "loadMeasurements": "Load measured values from the data base...",
+        "quantity": "Quantity"
     },
     "status": {
         "nodeRedNotAvailable": "Node-RED not available!",
@@ -50,10 +52,12 @@
         "missingPw": "Password missing!",
         "missingEnc": "Encryption flag missing!",
         "manualModeActive": "Manual mode active!",
-        "noBoolOrNumber": "'boolean' or 'number' as input required!",
-        "noNumber": "'number' as input required!",
-        "wrongMsgTopicType": "'string' as input topic required",
-        "wrongMsgTopic": "Unknown input topic",
+        "noBoolOrNumber": "No input signal of type 'boolean' or 'number'!",
+        "noNumber": "No input signal of type 'number'!",
+        "noObject": "Payload of input signal is not type 'object'!",
+        "noFromTo": "Payload of input signal is missing a 'from' and/or 'to' element!",
+        "wrongMsgTopicType": "No input signal of type 'string'!",
+        "wrongMsgTopic": "Unknown input topic!",
         "notPulseCntr": "Port is not a pulse counter!",
         "triggerInputInactive": "Trigger on input signal deactivated",
         "insufficientAccessRights": "No Permission for user: Standard!",
@@ -63,7 +67,9 @@
         "aiConfigInfo": "The configuration will be set immediately at EWIO2 on change!",
         "no_metering": "EWIO2 without metering interface!",
         "noCounter": "No meter configured at EWIO2!",
-        "noData": "No data available yet!"
+        "noData": "No data available yet!",
+        "getMeasurementsFailed": "Retrieving data failed!",
+        "loginFailed": "Login failed to retrieve data"
     },
     "ewio2Info": {
         "noEWIO2": "No EWIO2 discovered!",

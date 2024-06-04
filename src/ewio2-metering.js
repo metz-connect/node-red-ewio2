@@ -9,6 +9,9 @@
  */
 
 module.exports = function(RED) {
+    const {getValue, closeDeleteWebsocket} = require("./backend/ewio2Connection");
+    const MD5 = require("crypto-js/md5");
+    const {log, pubSub} = require("./backend/general");
     /**
     * Stores settings from counter configuration menu.
     * Checks if all required settings are available, otherwise shows error status.
@@ -17,8 +20,6 @@ module.exports = function(RED) {
     * @param {Object} config - counter settings from counter menu (frontend).
     */
     function Ewio2MeteringNode(config) {
-        const MD5 = require("crypto-js/md5");
-        const {log, pubSub} = require("./backend/general");
         RED.nodes.createNode(this,config);
 
         this.ewio2 = config.ewio2;
@@ -32,6 +33,7 @@ module.exports = function(RED) {
         this.outputTimestamp = config.outputTimestamp;
         this.outputFlags = config.outputFlags;
         this.outputTopic = config.outputTopic;
+        this.quantity = config.quantity;
 
         let node = this;
         log(node, 'create node');
@@ -140,13 +142,66 @@ module.exports = function(RED) {
                 }
                 pubSub.subscribe("send-value-datapoints", sendValueDatapoints);
 
-                (async function () {
-                    const {getValue} = require("./backend/ewio2Connection");
-                    // Eclipse shows 'await' warning due to jsdoc @return comment
-                    await getValue(configData, "counter", node.counter, node.id, RED, configNodeTls);
-                    if (node.counter) {
-                        await getValue(configData, "datapoints", node.datapoint, node.id, RED, configNodeTls);
+                node.on('input', async function(msg, send, done) {
+                    // check for correct timestamps (timestamps(topic): {from: timestamp1, to: timestamp2})
+                    if (msg.topic && typeof msg.topic === "string") {
+                        if (msg.topic === "timestamps") {
+                            if (typeof msg.payload === "object") {
+                                const inputObj = msg.payload;
+                                if (inputObj.from && typeof inputObj.from === "number" && inputObj.to && typeof inputObj.to === "number") {
+                                    // clear previous content of diagramm
+                                    node.send({ payload: []});
+
+                                    // request measurement data from ... to via REST API and close EWIO2 connection with active livedata
+                                    var configDataMeasurements = {configNodeId: this.ewio2, host: configNode.host, user: configNode.credentials.username, pw: MD5(configNode.credentials.password), enc: configNode.encryption, type: "measurements"};
+                                    configDataMeasurements.type = "measurements";
+                                    // request measurement data from ... to via REST API and close EWIO2 connection with active livedata (see below --> close...)
+                                    let conn = await getValue(configDataMeasurements, "measurements", node.datapoint, node.id, RED, configNodeTls);
+                                    var start = new Date(msg.payload.from).toISOString();
+                                    var end = new Date(msg.payload.to).toISOString();
+                                    // remove milliseconds from timestamp (ISO) and use " " (space) instead of "T" (required by EWIO2 REST API)
+                                    start = start.slice(0, start.length - 5).replace("T", " ");
+                                    end = end.slice(0, end.length - 5).replace("T", " ");
+                                    log(node, 'get historic measurement data from ' + start + ' to ' + end + '(quantity 0)');
+                                    await getHistoricData(conn, node, MD5(configNode.credentials.password + conn.tan), "1|" + start + "|" + end, 0);
+                                    // close previously opened connection to EWIO2, because livedata are not needed anymore
+                                    closeDeleteWebsocket(undefined, configData, RED);
+                                    closeDeleteWebsocket(undefined, configDataMeasurements, RED);
+                                }
+                                else {
+                                    log(node, 'from and/or to as input element missing');
+                                    pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.noFromTo", "configNodeId": this.ewio2, "addr": this.datapoint});
+                                }
+                            }
+                            else {
+                                log(node, 'not an object as input');
+                                pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.noObject", "configNodeId": this.ewio2, "addr": this.datapoint});
+                            }
+                        }
+                        else if (msg.topic === "livedata") {
+                            // check if valid quantity is available (from node input)
+                            var measurementQuantity = 0;
+                            if (msg.payload && typeof msg.payload === "number" && msg.payload > 0) {
+                                measurementQuantity = msg.payload;
+                            }
+                            await establishLivedataConnection(configData, node, RED, configNodeTls, configNode, measurementQuantity);
+                        }
+                        else {
+                            log(node, 'wrong topic');
+                            pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.wrongMsgTopic", "configNodeId": this.ewio2, "addr": this.datapoint});
+                        }
                     }
+                    else {
+                        log(node, 'wrong topic type (not string)');
+                        pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.wrongMsgTopicType", "configNodeId": this.ewio2, "addr": this.datapoint});
+                    }
+                    if (done) {
+                        done();
+                    }
+                });
+
+                (async function () {
+                    await establishLivedataConnection(configData, node, RED, configNodeTls, configNode, node.quantity);
                 })();
 
                 node.on("close", function(done) {
@@ -166,4 +221,93 @@ module.exports = function(RED) {
         }
     }
     RED.nodes.registerType("EWIO2 - Metering",Ewio2MeteringNode);
+
+    /**
+     * Establishes connection to EWIO2, to request counter data and datapoints.
+     * Additional historic measurement data are requested from data base, if quantity is set and valid.
+     * @memberof MeteringNode
+     * @param {Object} configData - Object with configuration node ID,  host, user, pw and encryption flag, used as key for ewio2Connections object.
+     * @param {Object} node - The current metering node itself.
+     * @param {Object} RED - Node-RED "infrastructure", used to publish events to frontend.
+     * @param {Object} configNodeTls - TLS config data object, to establish a encrypted connection.
+     * @param {Object} configNode - The current EWIO2 configuration node.
+     * @param {number} quantity - Quantity of requested measurement data from data base.
+     */
+    async function establishLivedataConnection(configData, node, RED, configNodeTls, configNode, quantity) {
+        // clear previous content of diagramm
+        node.send({ payload: []});
+
+        // Eclipse shows 'await' warning due to jsdoc @return comment
+        await getValue(configData, "counter", node.counter, node.id, RED, configNodeTls);
+        if (node.counter) {
+            await getValue(configData, "datapoints", node.datapoint, node.id, RED, configNodeTls);
+            // if valid quantity is available, request latest measurement data from data base
+            if (quantity && quantity > 0) {
+                log(node, 'positive quantity of ' + quantity + ' available -> request historic measurement data');
+                var configDataHistory = {configNodeId: node.ewio2, host: configNode.host, user: configNode.credentials.username, pw: MD5(configNode.credentials.password), enc: configNode.encryption, type: "measurements"};
+                let conn = await getValue(configDataHistory, "measurements", node.datapoint, node.id, RED, configNodeTls);
+                await getHistoricData(conn, node, MD5(configNode.credentials.password + conn.tan), "-1", quantity);
+                closeDeleteWebsocket(undefined, configDataHistory, RED);
+            }
+        }
+    }
+
+    /**
+     * Request historic measurement data from data base.
+     * Format node output that it fits to chart node input of Node-RED dashboard.
+     * @memberof MeteringNode
+     * @param {Object} conn - Connection object with details to connect to EWIO2.
+     * @param {Object} node - The current metering node itself.
+     * @param {string} pwHash - Hashed password which is used by EWIO2 REST API.
+     * @param {Object} valueRange - Time range of requested data (last dates or dates begining at ... and ending at ....
+     * @param {number} quantity - Quantity of requested measurement data from data base.
+     */
+    async function getHistoricData(conn, node, pwHash, valueRange, quantity) {
+        try {
+            const currentDp = JSON.parse(node.datapoint).dp;
+            const measurementSettings = {pw: pwHash, dp: currentDp, range: encodeURI(valueRange), quantity: quantity};
+            // retrieve measurement data from data base
+            var values = await conn.connectRestApi(RED, measurementSettings);
+            if (values && values !== "LOGIN ERROR") {
+                values = JSON.parse(values);
+                let channelData = values.data.channel_data;
+                if (channelData && channelData.length > 0) {
+                    channelData.forEach(function(value) {
+                        delete value.Kanal_ID;
+                        delete value.Flags;
+                        delete value.Grund;
+                        // rename "Zeit" to "x"
+                        Object.defineProperty(value, "x", Object.getOwnPropertyDescriptor(value, "Zeit"));
+                        delete value["Zeit"];
+                        value.x = Date.parse(value.x);
+                        // rename "Werte" to "y"
+                        Object.defineProperty(value, "y", Object.getOwnPropertyDescriptor(value, "Werte"));
+                        delete value["Werte"];
+                    });
+                    // sort data according time (x)
+                    const sortedData = Object.keys(channelData).map(key => channelData[key]).sort((a, b) => a.x > b.x ? 1 : -1);
+                    // Formatting of output data, that it fits to chart node input.
+                    var jsonData = [];
+                    jsonData.push(sortedData);
+                    const label = node.outputTopic;
+                    const measurements = [{ "series": [label], "data": jsonData, "labels": [""] }];
+                    const msg = { payload: measurements, topic: node.outputTopic };
+                    log(node, 'send data base data to node output, lenght: ' + channelData.length);
+                    node.send(msg);
+                }
+                else {
+                    log(node, 'no historic data available');
+                    pubSub.publish("show-status-datapoints", {"color": "yellow", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.noData", "configNodeId": node.ewio2, "addr": node.datapoint});
+                }
+            }
+            else {
+                log(node, 'login failed');
+                pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.loginFailed", "configNodeId": node.ewio2, "addr": node.datapoint});
+            }
+        }
+        catch (error) {
+            log(node, 'getting measurement values failed: ' + error);
+            pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.getMeasurementsFailed", "configNodeId": node.ewio2, "addr": node.datapoint});
+        }
+    }
 }

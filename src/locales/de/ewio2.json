@@ -24,7 +24,9 @@
         "datapoint": "Datenpunkt",
         "timestamp": "Zeitstempel",
         "range": "Intervall",
-        "nodeOutput": "Zusätzliche Ausgabewerte des Knoten..."
+        "nodeOutput": "Zusätzliche Ausgabewerte des Knoten...",
+        "loadMeasurements": "Messwerte aus Datenbank laden...",
+        "quantity": "Anzahl"
     },
     "status": {
         "nodeRedNotAvailable": "Node-RED nicht verfügbar!",
@@ -50,10 +52,12 @@
         "missingPw": "Passwort nicht angegeben!",
         "missingEnc": "Verschlüsselung nicht ausgewählt!",
         "manualModeActive": "Handbetrieb aktiv!",
-        "noBoolOrNumber": "Kein 'boolean' oder 'number' als Eingangsignal!",
-        "noNumber": "Keine 'number' als Eingangsignal!",
-        "wrongMsgTopicType": "Kein 'string' als Eingangs-Topic",
-        "wrongMsgTopic": "Unbekanntes Eingangs-Topic",
+        "noBoolOrNumber": "Kein Eingangsignal vom Typ 'boolean' oder 'number'!",
+        "noNumber": "Keine Eingangsignal vom Typ 'number'!",
+        "noObject": "Payload des Eingangsignals nicht vom Typ 'object'!",
+        "noFromTo": "Beim Payload des Eingangsignals fehlt ein 'from' und/oder 'to' Element!",
+        "wrongMsgTopicType": "Kein Eingangssignal vom Typ 'string'!",
+        "wrongMsgTopic": "Unbekanntes Eingangs-Topic!",
         "notPulseCntr": "Anschluss ist kein Impulszähler!",
         "triggerInputInactive": "Auslösen bei Eingangsignal deaktiviert",
         "insufficientAccessRights": "Keine Berechtigung für Benutzer: Standard!",
@@ -63,7 +67,9 @@
         "aiConfigInfo": "Konfiguration wird bei Änderung sofort am EWIO2 gesetzt!",
         "no_metering": "EWIO2 hat keine Zählerschnittstelle!",
         "noCounter": "Kein Zähler am EWIO2 eingerichtet!",
-        "noData": "Es sind noch keine Daten vorhanden!"
+        "noData": "Es sind noch keine Daten vorhanden!",
+        "getMeasurementsFailed": "Es konnten keine Daten geladen werden!",
+        "loginFailed": "Anmeldung zum Abrufen von Daten fehlgeschlagen"
     },
     "ewio2Info": {
         "noEWIO2": "Kein EWIO2 gefunden!",

@@ -174,6 +174,7 @@ function enableAiSpecificElements(enable, enableValueConfig) {
 function enableCounterSpecificElements(enable) {
     $("#node-input-outputTimestamp").prop("disabled", !enable);
     $("#node-input-outputFlags").prop("disabled", !enable);
+    $("#node-input-quantity").prop("disabled", !enable);
 }
 
 /**
