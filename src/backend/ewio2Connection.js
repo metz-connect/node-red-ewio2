@@ -132,8 +132,8 @@ async function getConfigData(keyEwio2Data, ioType, prevIoPort, counterId, nodeId
         }
         // reset IO port after publishing data to Node-RED frontend and backend, to avoid that user selected port in dropdown is overwritten by livedata of another port
         conn.requestedIoPort = undefined;
-        // start livedata channel
-        if (conn.ws) {
+        // start livedata channel only if websocket connection is established
+        if (conn.ws && conn.ws.readyState === 1) {
             if (ioType !== "counter") {
                 // datapoints, for example: get®livedata®datapoints®3 (counter-ID 3)
                 if (ioType === "datapoints") {
@@ -199,8 +199,8 @@ async function getValue(keyEwio2Data, ioType, ioPortAddr, nodeId, RED, tlsConfig
                         }
                     }
                 }
-                // start livedata channel and register digital input port, digital output port or datapoint for livedata updates
-                if (conn.ws) {
+                // start livedata channel and register digital input port, digital output port or datapoint for livedata updates, only if livedata connection is established
+                if (conn.ws && conn.ws.readyState === 1) {
                     if (ioType === "di" || ioType === "ai" || (ioType === "datapoints" && counterId !== "none")) {
                         await conn.sendWsMessage("get®livedata®" + ioTypeToFit, RED);
                     }
