@@ -149,24 +149,7 @@ module.exports = function(RED) {
                             if (typeof msg.payload === "object") {
                                 const inputObj = msg.payload;
                                 if (inputObj.from && typeof inputObj.from === "number" && inputObj.to && typeof inputObj.to === "number") {
-                                    // clear previous content of diagramm
-                                    node.send({ payload: []});
-
-                                    // request measurement data from ... to via REST API and close EWIO2 connection with active livedata
-                                    var configDataMeasurements = {configNodeId: this.ewio2, host: configNode.host, user: configNode.credentials.username, pw: MD5(configNode.credentials.password), enc: configNode.encryption, type: "measurements"};
-                                    configDataMeasurements.type = "measurements";
-                                    // request measurement data from ... to via REST API and close EWIO2 connection with active livedata (see below --> close...)
-                                    let conn = await getValue(configDataMeasurements, "measurements", node.datapoint, node.id, RED, configNodeTls);
-                                    var start = new Date(msg.payload.from).toISOString();
-                                    var end = new Date(msg.payload.to).toISOString();
-                                    // remove milliseconds from timestamp (ISO) and use " " (space) instead of "T" (required by EWIO2 REST API)
-                                    start = start.slice(0, start.length - 5).replace("T", " ");
-                                    end = end.slice(0, end.length - 5).replace("T", " ");
-                                    log(node, 'get historic measurement data from ' + start + ' to ' + end + '(quantity 0)');
-                                    await getHistoricData(conn, node, MD5(configNode.credentials.password + conn.tan), "1|" + start + "|" + end, 0);
-                                    // close previously opened connection to EWIO2, because livedata are not needed anymore
-                                    closeDeleteWebsocket(undefined, configData, RED);
-                                    closeDeleteWebsocket(undefined, configDataMeasurements, RED);
+                                    await prepareGetHistoricData(node, configNode, RED, configNodeTls, msg.payload, msg.topic, configData);
                                 }
                                 else {
                                     log(node, 'from and/or to as input element missing');
@@ -176,6 +159,15 @@ module.exports = function(RED) {
                             else {
                                 log(node, 'not an object as input');
                                 pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.noObject", "configNodeId": this.ewio2, "addr": this.datapoint});
+                            }
+                        }
+                        else if (msg.topic === "from") {
+                            if (typeof msg.payload === "number") {
+                                await prepareGetHistoricData(node, configNode, RED, configNodeTls, msg.payload, msg.topic, configData);
+                            }
+                            else {
+                                log(node, 'not a number as input');
+                                pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.noNumber", "configNodeId": this.ewio2, "addr": this.datapoint});
                             }
                         }
                         else if (msg.topic === "livedata") {
@@ -250,6 +242,58 @@ module.exports = function(RED) {
                 closeDeleteWebsocket(undefined, configDataHistory, RED);
             }
         }
+    }
+
+    /**
+     * Prepares request historic measurement data from data base.
+     * The request contains "from" and "to" timestamps or just the "from" timestamp with optional quantity of measurement values (otherwise default is 24).
+     * After the historic data are received, the existing livedata connection and the currently request historic data connection is closed.
+     * @memberof MeteringNode
+     * @param {Object} node - The current metering node itself.
+     * @param {Object} configNode - The current EWIO2 configuration node.
+     * @param {Object} RED - Node-RED "infrastructure", used to publish events to frontend.
+     * @param {Object} configNodeTls - TLS config data object, to establish a encrypted connection.
+     * @param {Object | string} payload - either object with "from" and "to" timestamp or string with "from" timestamp.
+     * @param {string} topic - topic of the input message, either "timestamps" or "from"
+     * @param {Object} configData - Object with configuration node ID,  host, user, pw and encryption flag, used as key for ewio2Connections object.
+     */
+    async function prepareGetHistoricData(node, configNode, RED, configNodeTls, payload, topic, configData) {
+        // clear previous content of diagramm
+        node.send({ payload: []});
+
+        // request measurement data from ... to via REST API and close EWIO2 connection with active livedata
+        var configDataMeasurements = {configNodeId: node.ewio2, host: configNode.host, user: configNode.credentials.username, pw: MD5(configNode.credentials.password), enc: configNode.encryption, type: "measurements"};
+        configDataMeasurements.type = "measurements";
+        // request measurement data via REST API and close EWIO2 connection with active livedata (see below --> close...)
+        let conn = await getValue(configDataMeasurements, "measurements", node.datapoint, node.id, RED, configNodeTls);
+        var start;
+        var end;
+        // request meaurement data "from" -> "to"
+        if (topic === "timestamps") {
+            start = new Date(payload.from).toISOString();
+            end = new Date(payload.to).toISOString();
+            // remove milliseconds from timestamp (ISO) and use " " (space) instead of "T" (required by EWIO2 REST API)
+            start = start.slice(0, start.length - 5).replace("T", " ");
+            end = end.slice(0, end.length - 5).replace("T", " ");
+            log(node, 'get historic measurement data from ' + start + ' to ' + end + '(quantity 0)');
+            await getHistoricData(conn, node, MD5(configNode.credentials.password + conn.tan), "1|" + start + "|" + end, 0);
+        }
+        // request measurement data "from" with optional quantity
+        else if (topic === "from") {
+            start = new Date(payload).toISOString();
+            // remove milliseconds from timestamp (ISO) and use " " (space) instead of "T" (required by EWIO2 REST API)
+            start = start.slice(0, start.length - 5).replace("T", " ");
+            var quantity = node.quantity;
+            // no quantity defined -> use 24
+            if (!quantity || quantity === 0) {
+                quantity = 24;
+            }
+            log(node, 'get historic measurement data from ' + start + ' (quantity ' + quantity + ')');
+            await getHistoricData(conn, node, MD5(configNode.credentials.password + conn.tan), "1|" + start, quantity);
+        }
+        // close previously opened connection to EWIO2, because livedata are not needed anymore
+        closeDeleteWebsocket(undefined, configData, RED);
+        closeDeleteWebsocket(undefined, configDataMeasurements, RED);
     }
 
     /**
