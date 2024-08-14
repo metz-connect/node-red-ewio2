@@ -318,15 +318,19 @@ module.exports = function(RED) {
                 if (channelData && channelData.length > 0) {
                     channelData.forEach(function(value) {
                         delete value.Kanal_ID;
-                        delete value.Flags;
                         delete value.Grund;
                         // rename "Zeit" to "x"
                         Object.defineProperty(value, "x", Object.getOwnPropertyDescriptor(value, "Zeit"));
-                        delete value["Zeit"];
+                        // append "Z" to datetime-string, in cases where measurement data are stored in UTC (to show show in local time)
+                        if (value.Flags.slice(0, 1) === "T") {
+                            value.x = value.x + "Z";
+                        }
+                        delete value.Zeit;
+                        delete value.Flags;
                         value.x = Date.parse(value.x);
                         // rename "Werte" to "y"
                         Object.defineProperty(value, "y", Object.getOwnPropertyDescriptor(value, "Werte"));
-                        delete value["Werte"];
+                        delete value.Werte;
                     });
                     // sort data according time (x)
                     const sortedData = Object.keys(channelData).map(key => channelData[key]).sort((a, b) => a.x > b.x ? 1 : -1);
