@@ -343,7 +343,6 @@ module.exports = function(RED) {
                     const msg = { payload: measurements, topic: node.outputTopic };
                     log(node, 'send data base data to node output, lenght: ' + channelData.length);
                     node.send(msg);
-                    node.send({ "enabled": true });
                 }
                 else {
                     log(node, 'no historic data available');
@@ -358,6 +357,9 @@ module.exports = function(RED) {
         catch (error) {
             log(node, 'getting measurement values failed: ' + error);
             pubSub.publish("show-status-datapoints", {"color": "red", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.getMeasurementsFailed", "configNodeId": node.ewio2, "addr": node.datapoint});
+        }
+        finally {
+            node.send({ "enabled": true });
         }
     }
 }
