@@ -307,6 +307,7 @@ module.exports = function(RED) {
      * @param {number} quantity - Quantity of requested measurement data from data base.
      */
     async function getHistoricData(conn, node, pwHash, valueRange, quantity) {
+        node.send({ "enabled": false });
         try {
             const currentDp = JSON.parse(node.datapoint).dp;
             const measurementSettings = {pw: pwHash, dp: currentDp, range: encodeURI(valueRange), quantity: quantity};
@@ -342,6 +343,7 @@ module.exports = function(RED) {
                     const msg = { payload: measurements, topic: node.outputTopic };
                     log(node, 'send data base data to node output, lenght: ' + channelData.length);
                     node.send(msg);
+                    node.send({ "enabled": true });
                 }
                 else {
                     log(node, 'no historic data available');
