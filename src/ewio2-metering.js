@@ -11,7 +11,7 @@
 module.exports = function(RED) {
     const {getValue, closeDeleteWebsocket} = require("./backend/ewio2Connection");
     const MD5 = require("crypto-js/md5");
-    const {log, pubSub} = require("./backend/general");
+    const {log, pubSub, sendStatusOutput} = require("./backend/general");
     /**
     * Stores settings from counter configuration menu.
     * Checks if all required settings are available, otherwise shows error status.
@@ -81,6 +81,7 @@ module.exports = function(RED) {
                     if (config.ewio2 == status.configNodeId) {
                         log(node, 'updated nodeID: ' + node.id);
                         node.status({fill: status.color, shape: status.shape, text: status.message});
+                        sendStatusOutput(status, node, RED);
                     }
                 }
                 log(node, 'subscribe "show-status": ' + node.id);

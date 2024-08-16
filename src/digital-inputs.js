@@ -19,7 +19,7 @@ module.exports = function(RED) {
     */
     function EwioDigitalInputsNode(config) {
         const MD5 = require("crypto-js/md5");
-        const {log, pubSub} = require("./backend/general");
+        const {log, pubSub, sendStatusOutput} = require("./backend/general");
         RED.nodes.createNode(this,config);
 
         this.ewio2 = config.ewio2;
@@ -79,6 +79,7 @@ module.exports = function(RED) {
                     if (config.ewio2 == status.configNodeId) {
                         log(node, 'updated nodeID: ' + node.id);
                         node.status({fill: status.color, shape: status.shape, text: status.message});
+                        sendStatusOutput(status, node, RED);
                     }
                 }
                 log(node, 'subscribe "show-status": ' + node.id);

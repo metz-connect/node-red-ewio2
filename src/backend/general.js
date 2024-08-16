@@ -96,4 +96,27 @@ function publishSubscribe() {
     }
 }
 
-module.exports = { log, getLogEnable, setLogfileSettings, pubSub }
+/**
+ * Enables or disables syslog logging.
+ * @memberof General
+ * @param {Object} status - Status object with all elements required for node´s status.
+ * @param {Object} node - The current node, for which the status should be sent.
+ * @param {Object} RED - Node-RED "infrastructure", used to get status messages according keyword.
+ */
+function sendStatusOutput(status, node, RED) {
+    // prepare status msg that is send
+    var nodeState;
+    if (status.color === "green") {
+        nodeState = "ok";
+    }
+    else if (status.color === "yellow") {
+        nodeState = "warning";
+    }
+    else {
+        nodeState = "error";
+    }
+    // send status msg to node output
+    node.send({status:{state: nodeState, text: RED._(status.message), source:{id: node.id, type: node.type, name: node.name}}});
+}
+
+module.exports = { log, getLogEnable, setLogfileSettings, pubSub, sendStatusOutput }
