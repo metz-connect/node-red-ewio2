@@ -342,6 +342,8 @@ module.exports = function(RED) {
                     const measurements = [{ "series": [label], "data": jsonData, "labels": [""] }];
                     const msg = { payload: measurements, topic: node.outputTopic };
                     log(node, 'send data base data to node output, lenght: ' + channelData.length);
+                    // show connected status when retrieving database data
+                    pubSub.publish("show-status-datapoints", {"color": "green", "shape": "dot", "message": "@metz-connect/node-red-ewio2/ewio2:status.connected", "configNodeId": node.ewio2, "addr": node.datapoint});
                     node.send(msg);
                 }
                 else {
