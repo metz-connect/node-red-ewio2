@@ -14,11 +14,14 @@ Additional values of nodes output may be timestamp and flags of last measurement
 Datatype changes then from 'number' to 'Object'!
 Properties therefore can be seen in configuration menu below 'Additional node output values...'.
 
+The current status of the node is also output of node. 'state' can be 'ok', 'warning' or 'error', 'text' and 'source' correspond to the general 'status' node.
+
 Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
 
 ### Outputs
 : payload (number | Object) : Current value of meter datapoint, optional are timestamp and flags.
 : topic (string) : Optional 'topic'
+: status (Object) : Status of node, with 'state', 'text' and 'source'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node to connect to an EWIO2.

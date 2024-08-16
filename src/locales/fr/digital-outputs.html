@@ -9,6 +9,8 @@ L'état de commutation souhaité, qui a été reçu en tant qu'entrée de nœud,
 
 La sortie du nœud est l'état de commutation actuel de la sortie numérique, si la sortie numérique a été activée par le signal d'entrée du nœud.
 
+L'statut actuel du nœud est également fourni par le nœud. 'state' peut être 'ok', 'warning' ou 'error', le 'text' et la 'source' correspondent au nœud général 'status'.
+
 En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
 
 ### Entrées
@@ -17,6 +19,7 @@ En outre, un 'topic' peut être spécifié dans le menu de configuration, qui se
 ### Sorties
 : payload (boolean) : État de commutation actuel
 : topic (string) : 'topic' facultatif
+: status (Object) : Statut du nœud, avec 'état', 'text' et 'source'
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.

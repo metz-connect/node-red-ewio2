@@ -14,11 +14,14 @@ D'autres valeurs de sortie des nœuds peuvent être l'horodatage et les drapeaux
 Le type de données passe alors de "number" à "Object" !
 Les propriétés peuvent donc être consultées dans le menu de configuration sous "Valeurs de sortie de nœuds supplémentaires...".
 
+L'statut actuel du nœud est également fourni par le nœud. 'state' peut être 'ok', 'warning' ou 'error', le 'text' et la 'source' correspondent au nœud général 'status'.
+
 En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
 
 ### Sorties
 : payload (number | Object) : Valeur actuelle du point de données du compteur, l'horodatage et les drapeaux sont facultatifs.
 : topic (string) : 'topic' facultatif
+: status (Object) : Statut du nœud, avec 'état', 'text' et 'source'
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.

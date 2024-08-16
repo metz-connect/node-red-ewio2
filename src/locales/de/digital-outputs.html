@@ -9,6 +9,8 @@ Der am Knoten-Eingang empfangene Schaltzustand wird am digitalen Ausgang des EWI
 
 Als Knoten-Ausgang wird der aktuelle Schaltzustand des digitalen Ausgang ausgegeben, wenn der digitale Ausgang durch ein Knoten-Eingangssignal geschaltet wurde.
 
+Zusätzlich wird der aktuelle Status des Knoten ausgegeben. 'state' kann 'ok', 'warning' oder 'error' sein, 'text' und 'source' entsprechen dem allgemeinen 'status' Knoten.
+
 Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom Knoten ausgegeben wird.
 
 ### Eingänge
@@ -17,6 +19,7 @@ Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom K
 ### Ausgänge
 : payload (boolean) : Aktueller Schaltzustand
 : topic (string) : Optionales 'Topic'
+: status (Object) : Status des Knoten, mit 'state', 'text' und 'source'
 
 ### Konfigurations-Menü
 Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.

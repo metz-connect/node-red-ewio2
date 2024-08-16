@@ -9,6 +9,8 @@ Der am Knoten-Eingang empfangene Wert wird am analogen Ausgang des EWIO2 gesetzt
 
 Als Knoten-Ausgang wird der aktuelle Wert des analogen Ausgang ausgegeben, wenn der analoge Ausgang durch ein Knoten-Eingangssignal gesetzt wurde.
 
+Zusätzlich wird der aktuelle Status des Knoten ausgegeben. 'state' kann 'ok', 'warning' oder 'error' sein, 'text' und 'source' entsprechen dem allgemeinen 'status' Knoten.
+
 Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom Knoten ausgegeben wird.
 
 ### Eingänge
@@ -17,6 +19,7 @@ Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom K
 ### Ausgänge
 : payload (number) : Aktueller Wert
 : topic (string) : Optionales 'Topic'
+: status (Object) : Status des Knoten, mit 'state', 'text' und 'source'
 
 ### Konfigurations-Menü
 Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.

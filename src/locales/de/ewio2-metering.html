@@ -14,11 +14,14 @@ Zusätzlich zur Ausgabe des aktuellen Messwertes kann der dazugehörige Zeitstem
 Der Datentyp der Ausgabe ist dann nicht mehr 'number', sondern 'Object'!
 Die Einstellungen dazu sind im Konfigurationsmenü unter 'Zusätzliche Ausgabewerte des Knoten...' zu finden.
 
+Zusätzlich wird der aktuelle Status des Knoten ausgegeben. 'state' kann 'ok', 'warning' oder 'error' sein, 'text' und 'source' entsprechen dem allgemeinen 'status' Knoten.
+
 Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom Knoten ausgegeben wird.
 
 ### Ausgänge
 : payload (number | Object) : Aktueller Wert des Zählerdatenpunktes, optional sind Zeitstempel und Flags.
 : topic (string) : Optionales 'Topic'
+: status (Object) : Status des Knoten, mit 'state', 'text' und 'source'
 
 ### Konfigurations-Menü
 Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.

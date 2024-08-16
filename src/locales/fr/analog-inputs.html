@@ -15,6 +15,8 @@ Le nœud peut lire les valeurs d'entrée analogiques de EWIO2 par les signaux d'
 
 La condition préalable est que le paramètre "Signal d'entrée au nœud" soit défini dans le menu de configuration.
 
+L'statut actuel du nœud est également fourni par le nœud. 'state' peut être 'ok', 'warning' ou 'error', le 'text' et la 'source' correspondent au nœud général 'status'.
+
 En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
 
 ### Entrées
@@ -23,6 +25,7 @@ En outre, un 'topic' peut être spécifié dans le menu de configuration, qui se
 ### Sorties
 : payload (number) : Valeur actuelle de l'entrée analogique
 : topic (string) : 'topic' facultatif
+: status (Object) : Statut du nœud, avec 'état', 'text' et 'source'
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.

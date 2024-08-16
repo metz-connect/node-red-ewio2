@@ -9,6 +9,8 @@ The desired value, which was received as node input, will be set to analog outpu
 
 Output of node is the current value of analog output, if analog output was set by node input signal.
 
+The current status of the node is also output of node. 'state' can be 'ok', 'warning' or 'error', 'text' and 'source' correspond to the general 'status' node.
+
 Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
 
 ### Inputs
@@ -17,6 +19,7 @@ Furthermore, a 'topic' can be specified in configuration menu, which will be add
 ### Outputs
 : payload (number) : Current value
 : topic (string) : Optional 'topic'
+: status (Object) : Status of node, with 'state', 'text' and 'source'
 
 ### Configuration menu
 This node uses the connection of EWIO2 node, to connect to an EWIO2.
