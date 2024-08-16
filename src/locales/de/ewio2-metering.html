@@ -1,5 +1,5 @@
 <script type="text/markdown" data-help-name="EWIO2 - Metering">
-Wert eines Zählers des EWIO2 lesen.
+Messwert eines Zählers des EWIO2 lesen.
 
 Der Zähler-Knoten liefert den aktuellen Messwert eines Zählerdatenpunktes, der am EWIO2 angeschlossen und konfiguriert ist.
 
@@ -10,24 +10,48 @@ Es können Werte von **Modbus**-Zählern, **M-Bus**-Zählern und EWIO2-Systemzä
 Der Knoten reagiert auf alle Änderungen des Messwertes und gibt diese am Ausgang des Knoten aus.
 Die Konfiguration des Zählerdatenpunktes, sowie des Abtastintervalls, muss vorab im EWIO2 Web-Interface erfolgen.
 
+Ist im Konfigurationsmenü eine 'Anzahl' Messwerte angegeben, werden beim 'deploy' des Flows die letzten Messwerte aus der Datenbank geladen und am Ausgang des Knoten ausgegeben. Danach reagiert der Knoten auf alle Änderungen des Messwertes.
+
+Der Knoten kann durch Eingangssignale Messwerte aus der Datenbank auslesen:
+- **topic**: "timestamps" + **payload**: Object mit Elementen 'from' und 'to' (Zeitstempel als number)
+  - Messwerte von 'from' bis 'to' laden
+- **topic**: "from" + **payload**: Zeitstempel als number
+  - Anzahl Messwerte (siehe Konfigurationsmenü) von 'from' laden
+- **topic**: "livedata" + **payload**: Anzahl Messwerte als number
+  - Die letzten Messwerte laden
+
+Wird Eingangssignal 'livedata' empfangen, geht der Knoten danach in den Modus über, auf Änderungen des Messwertes zu reagieren und auszugeben. Mit den Eingangssignalen 'timestamps' und 'from' werden Messwerte aus der Datenbank ausgelesen, danach reagiert der Knoten auf keine Änderungen des Messwertes.
+
+Die Ausgabe der Messwerte der Datenbank ist so formatiert, dass die Daten vom Dashboard Knoten 'chart' als Eingangssignal genutzt werden können.
+
+Siehe dazu auch das Beispiel "EWIO2 get measurements from database".
+
 Zusätzlich zur Ausgabe des aktuellen Messwertes kann der dazugehörige Zeitstempel und die Flags ausgegeben werden.
 Der Datentyp der Ausgabe ist dann nicht mehr 'number', sondern 'Object'!
 Die Einstellungen dazu sind im Konfigurationsmenü unter 'Zusätzliche Ausgabewerte des Knoten...' zu finden.
 
 Zusätzlich wird der aktuelle Status des Knoten ausgegeben. 'state' kann 'ok', 'warning' oder 'error' sein, 'text' und 'source' entsprechen dem allgemeinen 'status' Knoten.
 
+Der Knoten setzt beim Laden von Messwerten aus der Datenbank das Ausgangssignal 'enabled' auf 'false'. Dadurch können Dashboard Elemente deaktiviert werden.
+
 Desweiteren kann ein 'topic' im Konfigurationmenü festgelegt werden, dass vom Knoten ausgegeben wird.
+
+### Eingänge
+: payload (Object | number) : Anzahl Messwerte oder Zeitstempel
+: topic (string) : "timestamps", "from" oder "livedata"
 
 ### Ausgänge
 : payload (number | Object) : Aktueller Wert des Zählerdatenpunktes, optional sind Zeitstempel und Flags.
 : topic (string) : Optionales 'Topic'
 : status (Object) : Status des Knoten, mit 'state', 'text' und 'source'
+: enabled (boolean) : disabled bedeutet Datenabfrage läuft
 
 ### Konfigurations-Menü
 Dieser Knoten nutzt die Verbindung des EWIO2-Knoten, um sich mit einem EWIO2 zu verbinden.
 Alle im EWIO2 Web-Interface konfigurierten Zähler und Datenpunkte werden geladen und können ausgewählt werden.
 Für den ausgewählten Zählerdatenpunkt wird der letzte Messwert, das Abtastintervall, der Zeitstempel und die Flags angezeigt.
 Zusätzlich zur Ausgabe des Messwertes kann der Zeitstempel, die Flags und ein Topic ausgegeben werden.
+Die Anzahl der letzten Messwerte kann aus der Datenbank geladen werden.
 
 ### Eigenschaften
 : EWIO2 (select) : EWIO2-Knoten, zur Verbindung zum EWIO2
@@ -40,6 +64,7 @@ Zusätzlich zur Ausgabe des Messwertes kann der Zeitstempel, die Flags und ein T
 : Zeitstempel (boolean) : Zustätzlich den Zeitstempel ausgeben
 : Flags (boolean) : Zusätzlich die Flags ausgeben
 : Topic (string) : Zusätzlich das Topic ausgeben
+: Anzahl (number) : Anzahl Messwerte aus Datenbank laden
 : Name (string) : Benutzerdefinierte Bezeichnung des Knotens
 
 ### Links

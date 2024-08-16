@@ -10,24 +10,48 @@ Les valeurs des compteurs **Modbus**, **M-Bus** et du système EWIO2 peuvent êt
 Le nœud fournit chaque changement de valeur de mesure à la sortie du nœud.
 La configuration du point de référence et de la plage du compteur doit être effectuée au préalable dans l'interface web EWIO2.
 
+Si une 'Quantité' de valeurs mesurées est spécifiée dans le menu de configuration, les dernières valeurs mesurées sont chargées à partir de la base de données lorsque le flux est ” déployé » et émises à la sortie du nœud. Le nœud réagit alors à toutes les modifications de la valeur mesurée.
+
+Le nœud peut lire les valeurs mesurées dans la base de données à l'aide de signaux d'entrée:
+- **topic**: "timestamps" + **payload**: Object avec des éléments 'from' et 'to' (horodatage sous forme de number)
+  - Mesures de la charge 'from' -> 'to'
+- **topic**: "from" + **payload**: Horodatage sous forme de number
+  - Chargement de la quantité de mesures (voir le menu de configuration) 'from'
+- **topic**: "livedata" + **payload**: Quantification des mesures en number
+  - Charger les dernières mesures
+
+Si le signal d'entrée 'livedata' est reçu, le nœud passe en mode de réaction aux modifications de la valeur mesurée et les émet. Les signaux d'entrée 'timestamps' et 'from' sont utilisés pour lire les valeurs mesurées dans la base de données, après quoi le nœud ne réagit plus aux modifications de la valeur mesurée.
+
+La sortie des valeurs mesurées de la base de données est formatée de manière à ce que les données puissent être utilisées comme signal d'entrée pour le nœud de Dashboard 'chart'.
+
+Voir aussi l'exemple "EWIO2 get measurements from database".
+
 D'autres valeurs de sortie des nœuds peuvent être l'horodatage et les drapeaux de la dernière valeur mesurée.
 Le type de données passe alors de "number" à "Object" !
 Les propriétés peuvent donc être consultées dans le menu de configuration sous "Valeurs de sortie de nœuds supplémentaires...".
 
 L'statut actuel du nœud est également fourni par le nœud. 'state' peut être 'ok', 'warning' ou 'error', le 'text' et la 'source' correspondent au nœud général 'status'.
 
+Le nœud définit le signal de sortie 'enabled' à 'false' lors du chargement des valeurs mesurées à partir de la base de données. Cela permet de désactiver les éléments du Dashboard.
+
 En outre, un 'topic' peut être spécifié dans le menu de configuration, qui sera une sortie supplémentaire du nœud.
+
+### Entrées
+: payload (Object | number) : Quantité de mesures ou horodatage
+: topic (string) : "timestamps", "from" ou "livedata"
 
 ### Sorties
 : payload (number | Object) : Valeur actuelle du point de données du compteur, l'horodatage et les drapeaux sont facultatifs.
 : topic (string) : 'topic' facultatif
 : status (Object) : Statut du nœud, avec 'état', 'text' et 'source'
+: enabled (boolean) : disabled moyens recherche de données en cours
 
 ### Menu de configuration
 Ce nœud utilise la connexion du nœud EWIO2 pour se connecter à un EWIO2.
 Tous les compteurs et points de données configurés dans l'interface web EWIO2 peuvent être sélectionnés.
 Pour le point de mesure sélectionné, la dernière valeur mesurée, la plage d'échantillonnage, l'horodatage et les drapeaux sont affichés.
 En outre, l'horodatage, les drapeaux et le 'topic' peuvent être configurés en tant que sortie de nœuds.
+Le numéro des dernières valeurs mesurées peut être chargé à partir de la base de données.
 
 ### Propriétés
 : EWIO2 (select) : Nœud EWIO2, pour se connecter à EWIO2
@@ -40,6 +64,7 @@ En outre, l'horodatage, les drapeaux et le 'topic' peuvent être configurés en 
 : Horodatage (boolean) : Edition supplémentaire de l'horodatage
 : Flags (boolean) : Édition supplémentaire de drapeaux
 : Topic (string) : Résultats supplémentaires du 'topic'
+: Quantité (number) : Charger le nombre de mesures de la base de données
 : Nom (string) : Nom du nœud défini par l'utilisateur
 
 ### Liens

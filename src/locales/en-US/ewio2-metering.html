@@ -10,24 +10,48 @@ Values of **Modbus**, **M-Bus** and EWIO2 system meters can be read.
 Node provides every change of measurement value to nodes output.
 Configuration of meter datapoint and range must be done previously in EWIO2 web interface.
 
+If a 'Quantity' of measured values is specified in the configuration menu, the last measured values are loaded from the database when the flow is 'deployed' and output at the node output. The node then reacts to all changes to the measured value.
+
+The node can read measured values from the database using input signals:
+- **topic**: "timestamps" + **payload**: Object with elements 'from' and 'to' (timestamps as number)
+  - Load measurements 'from' -> 'to'
+- **topic**: "from" + **payload**: Timestamp as number
+  - Load quantity of measurements (see configuration menu) 'from'
+- **topic**: "livedata" + **payload**: Quantity of measurements as number
+  - Load last measurements
+
+If the input signal 'livedata' is received, the node then switches to the mode of reacting to changes in the measured value and outputting them. The input signals 'timestamps' and 'from' are used to read measured values from the database, after which the node does not react to any changes in the measured value.
+
+The output of the measured values from the database is formatted so that the data can be used as an input signal for the 'chart' dashboard node.
+
+See also the example "EWIO2 get measurements from database".
+
 Additional values of nodes output may be timestamp and flags of last measurement value.
 Datatype changes then from 'number' to 'Object'!
 Properties therefore can be seen in configuration menu below 'Additional node output values...'.
 
 The current status of the node is also output of node. 'state' can be 'ok', 'warning' or 'error', 'text' and 'source' correspond to the general 'status' node.
 
+The node sets the output signal 'enabled' to 'false' when loading measured values from the database. This allows dashboard elements to be deactivated.
+
 Furthermore, a 'topic' can be specified in configuration menu, which will be additional output of node.
+
+### Inputs
+: payload (Object | number) : Quantity of measurements or timestamp
+: topic (string) : "timestamps", "from" or "livedata"
 
 ### Outputs
 : payload (number | Object) : Current value of meter datapoint, optional are timestamp and flags.
 : topic (string) : Optional 'topic'
 : status (Object) : Status of node, with 'state', 'text' and 'source'
+: enabled (boolean) : disabled means data retrieval ongoing
 
 ### Configuration menu
 This node uses the connection of EWIO2 node to connect to an EWIO2.
 All meters and datapoints, which are configured in EWIO2 web interface, can be selected.
 For the selected meter datapoint, the last measured value, sampling range, timestamp and flags are shown.
 Additionally timestamp, flags and topic can be configured as nodes output.
+The number of the last measured values can be loaded from the database.
 
 ### Properties
 : EWIO2 (select) : EWIO2 node, to connect to EWIO2
@@ -40,6 +64,7 @@ Additionally timestamp, flags and topic can be configured as nodes output.
 : Timestamp (boolean) : Additionl output of timestamp
 : Flags (boolean) : Additional output of flags
 : Topic (string) : Additional output of topic
+: Quantity (number) : Load number of measurements from database
 : Name (string) : User defined name of node
 
 ### Links
