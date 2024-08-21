@@ -474,6 +474,14 @@ class Ewio2Connection {
                             connObj.publishIoPortStatus(counterElement, RED, true, false);
                         }
                     }
+                    // received status information for a counter
+                    else if (parts.length === 4) {
+                        const counterElement = {"ioType": parts[0], "address": parts[2], "status": parts[3]};
+                        // only publish received livedata (no ws-setup promise (getPromise) available)
+                        if (connObj.#noGetPromisePending(counterElement.ioType)) {
+                            connObj.publishIoPortStatus(counterElement, RED, true, false);
+                        }
+                    }
                     // metering error received (no metering model)
                     else if (parts.length === 3) {
                         RED.comms.publish("publish/ewio2/error/" + connObj.configNodeId, {code: ("status." + parts[2])});
@@ -488,9 +496,13 @@ class Ewio2Connection {
                 else if (strData.startsWith("datapoints®config")) {
                     const parts = strData.split("®");
                     let datapointsElement = {};
-                    // the msg must contain complete datapoints datasets
-                    if (parts.length === 9) {
-                        datapointsElement = {"ioType": parts[0], "counterId": parts[2], "id": parts[3], "name": parts[4], "range": parts[5], "timestamp": parts[6], "flags": parts[7], "value": parts[8], "source": "requested"};
+                    // the msg must contain complete datapoints datasets (length 10: with additional status)
+                    if (parts.length >= 9) {
+                        var receivedStatus = "";
+                        if (parts.length === 10) {
+                            receivedStatus = parts[9];
+                        }
+                        datapointsElement = {"ioType": parts[0], "counterId": parts[2], "id": parts[3], "name": parts[4], "range": parts[5], "timestamp": parts[6], "flags": parts[7], "value": parts[8], "source": "requested", "status": receivedStatus};
                         const recvCntrDpAddr = parts[0] + "®" + parts[2] + "®" + parts[3];
                         connObj.values[recvCntrDpAddr] = datapointsElement;
                         // only publish received livedata (no ws-setup promise (getPromise) available)
@@ -661,6 +673,9 @@ class Ewio2Connection {
                 // check and publish manual mode
                 if (element.manualMode == "1") {
                     pubSub.publish("show-status-" + element.ioType, {"color": "yellow", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.manualModeActive", "configNodeId": this.configNodeId, "addr": JSON.stringify(ioPort)});
+                }
+                else if (element.status && element.status !== "1") {
+                    pubSub.publish("show-status-" + element.ioType, {"color": "yellow", "shape": "ring", "message": "@metz-connect/node-red-ewio2/ewio2:status.counterDeactivated", "configNodeId": this.configNodeId, "addr": JSON.stringify(ioPort)});
                 }
                 else {
                     pubSub.publish("show-status-" + element.ioType, {"color": "green", "shape": "dot", "message": "@metz-connect/node-red-ewio2/ewio2:status.connected", "configNodeId": this.configNodeId, "addr": JSON.stringify(ioPort)});

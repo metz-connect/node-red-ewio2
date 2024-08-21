@@ -52,6 +52,7 @@
         "missingPw": "Password missing!",
         "missingEnc": "Encryption flag missing!",
         "manualModeActive": "Manual mode active!",
+        "counterDeactivated": "Meter deactivated!",
         "noBoolOrNumber": "No input signal of type 'boolean' or 'number'!",
         "noNumber": "No input signal of type 'number'!",
         "noObject": "Payload of input signal is not type 'object'!",

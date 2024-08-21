@@ -52,6 +52,7 @@
         "missingPw": "Passwort nicht angegeben!",
         "missingEnc": "Verschlüsselung nicht ausgewählt!",
         "manualModeActive": "Handbetrieb aktiv!",
+        "counterDeactivated": "Zähler deaktiviert!",
         "noBoolOrNumber": "Kein Eingangsignal vom Typ 'boolean' oder 'number'!",
         "noNumber": "Keine Eingangsignal vom Typ 'number'!",
         "noObject": "Payload des Eingangsignals nicht vom Typ 'object'!",

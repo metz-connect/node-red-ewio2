@@ -52,6 +52,7 @@
         "missingPw": "Mot de passe manquant!",
         "missingEnc": "Drapeau de chiffrement manquant!",
         "manualModeActive": "Mode manuel actif!",
+        "counterDeactivated": "Compteur désactivé!",
         "noBoolOrNumber": "Pas de signal d'entrée de type 'boolean' ou 'number'!",
         "noNumber": "Pas de signal d'entrée de type 'number'!",
         "noObject": "La charge utile du signal d'entrée n'est pas de type 'object'!",

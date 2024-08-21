@@ -88,6 +88,16 @@ module.exports = function(RED) {
                 pubSub.subscribe("show-status", showStatus);
 
                 // handles counter errors received from pubSub in ewio2Connection.js and shows status by calling showStatus fct above (in ewio2-counters.js)
+               function showStatusCounter(status) {
+                    // received IO port (from EWIO2 livechannel or from ewio2Connections map) is equal to selected IO port (for this node)
+                    // received IO port may be empty for errors not related to an IO (e.g. "wrong credentials")
+                    if (status.addr === config.counter) {
+                        showStatus(status);
+                    }
+                }
+                pubSub.subscribe("show-status-counter", showStatusCounter);
+
+                // handles counter errors received from pubSub in ewio2Connection.js and shows status by calling showStatus fct above (in ewio2-counters.js)
                 function showStatusDatapoints(status) {
                     // received IO port (from EWIO2 livechannel or from ewio2Connections map) is equal to selected IO port (for this node)
                     // received IO port may be empty for errors not related to an IO (e.g. "wrong credentials")
